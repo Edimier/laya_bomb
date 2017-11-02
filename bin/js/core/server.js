@@ -12,18 +12,41 @@ var Server = /** @class */ (function (_super) {
     __extends(Server, _super);
     function Server() {
         var _this = _super.call(this) || this;
-        _this.protoBuf = Laya.Browser.window.protobuf;
         _this.socket = new Laya.Socket();
-        //this.protoBuf.load("../laya/proto/awesome.proto", this.protoLoadDone);
         _this._protoIDs = ProtoIDs.getMap();
-        _this._protoBuilderMap = {
-            user: _this.protoBuf.loadProto(Laya.loader.load("../laya/proto/awesome.proto")),
-            game: _this.protoBuf.loadProto(Laya.loader.load("../laya/proto/awesome.proto")),
-        };
+        _this._protoBuilderMap = {};
+        _this.protoBuf = Laya.Browser.window.protobuf;
+        _this.protoBuf.load("../laya/proto/user.proto", _this.initUserProtoBuilder);
+        _this.protoBuf.load("../laya/proto/game.proto", _this.initGameProtoBuilder);
         return _this;
     }
-    Server.prototype.protoLoadDone = function (err, root) {
-        this.root = root;
+    Server.prototype.initUserProtoBuilder = function (err, root) {
+        this._protoBuilderMap["user"] = root;
+        this.testProto();
+    };
+    Server.prototype.initGameProtoBuilder = function (err, root) {
+        this._protoBuilderMap["game"] = root;
+    };
+    Server.prototype.testProto = function () {
+        var AwesomeMessage = this._protoBuilderMap["user"].lookup("user.UserInfoRequest");
+        var message = AwesomeMessage.create({
+            uid: 123
+        });
+        // Verify the message if necessary (i.e. when possibly incomplete or invalid)
+        var errMsg = AwesomeMessage.verify(message);
+        if (errMsg)
+            throw Error(errMsg);
+        // Encode a message to an Uint8Array (browser) or Buffer (node)
+        var buffer = AwesomeMessage.encode(message).finish();
+        // ... do something with buffer
+        // Or, encode a plain object  也可以用这种方式创建这个数据然后编码
+        var buffer = AwesomeMessage.encode({
+            awesomeField: "AwesomeString"
+        }).finish();
+        // ... do something with buffer
+        // Decode an Uint8Array (browser) or Buffer (node) to a message   解码处理
+        var message = AwesomeMessage.decode(buffer);
+        console.log(message);
     };
     Server.prototype.connect = function (addr, port) {
         this.socket.connectByUrl(addr + ":" + port);
@@ -83,13 +106,25 @@ var Server = /** @class */ (function (_super) {
                 //let body: egret.ByteArray = new egret.ByteArray();
                 var body = new Laya.Byte();
                 bytes.readBytes(body);
-                var Message = this._protoBuilderMap[module].build(name_1);
-                var message = Message.decode(body['buffer']);
+                var Message = this._protoBuilderMap[module].lookup(name_1);
+                var message = this._protoBuilderMap[module].decode(body.buffer);
                 this.event(name_1, message);
-                var AwesomeMessage = root.lookup("awesomepackage.AwesomeMessage");
         }
     };
     Server.prototype.onConnectError = function (e) {
+    };
+    Server.prototype.sendData = function (name, data, cb) {
+        if (cb === void 0) { cb = null; }
+        var head = name.substring(0, name.indexOf('.'));
+        var Message = this._protoBuilderMap[head].build(name);
+        var message = new Message(data);
+        var body = new Laya.Byte(message.encodeAB());
+        var pkg = new Laya.Byte();
+        pkg.writeUint16(body.length + 2);
+        pkg.writeUint16(this._protoIDs[name]);
+        pkg.writeArrayBuffer(body);
+        this.socket.send(pkg);
+        this.socket.flush();
     };
     return Server;
 }(Laya.EventDispatcher));

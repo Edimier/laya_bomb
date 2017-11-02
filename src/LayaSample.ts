@@ -1,16 +1,11 @@
-//import Event = Laya.Event;
-class E extends Laya.Event{
-    
-}
 // 程序入口
+let server = new Server();
+
 class GameMain{
     constructor()
     {
-        
-        Laya.init(600,400);
-        let img:Laya.Sprite = new Laya.Sprite();
-        Laya.stage.addChild(img);
-        img.on("click",this,()=>{});
+        Laya.init(100,100);
+        //server.testProto();
     }
 }
 new GameMain();

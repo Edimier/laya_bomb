@@ -1,0 +1,5 @@
+package game;
+
+message GameStartNtf {
+  	required int32 session = 1;
+}

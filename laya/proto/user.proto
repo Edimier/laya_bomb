@@ -1,0 +1,5 @@
+package user;
+
+message UserInfoRequest {
+	required int32 uid = 1;
+}

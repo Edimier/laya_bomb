@@ -1,21 +1,54 @@
 class Server extends Laya.EventDispatcher{
     
     private socket:Laya.Socket;
-    private protoBuf =  Laya.Browser.window.protobuf;
+    private protoBuf;
     private root;
     private _protoIDs;
     private _protoBuilderMap;
     constructor(){
         super();
         this.socket = new Laya.Socket();
-        //this.protoBuf.load("../laya/proto/awesome.proto", this.protoLoadDone);
         this._protoIDs = ProtoIDs.getMap();
+        this._protoBuilderMap = {};
+        this.protoBuf =  Laya.Browser.window.protobuf;
+        this.protoBuf.load("../laya/proto/user.proto", this.initUserProtoBuilder);
+        this.protoBuf.load("../laya/proto/game.proto", this.initGameProtoBuilder);
+    }
 
-        this._protoBuilderMap = {
-            user : this.protoBuf.loadProto(Laya.loader.load("user.proto")),
-            game : this.protoBuf.loadProto(Laya.loader.load("game.proto")),
-		};
+    private initUserProtoBuilder(err, root){
+        this._protoBuilderMap["user"] = root;
+        this.testProto();
+    }
 
+    private initGameProtoBuilder(err, root){
+        this._protoBuilderMap["game"] = root;
+    }
+
+    public testProto():void{
+        var AwesomeMessage = this._protoBuilderMap["user"].lookup("user.UserInfoRequest");
+        var message = AwesomeMessage.create({
+            uid: 123
+        });
+
+        // Verify the message if necessary (i.e. when possibly incomplete or invalid)
+        var errMsg = AwesomeMessage.verify(message);
+        if (errMsg)
+            throw Error(errMsg);
+
+        // Encode a message to an Uint8Array (browser) or Buffer (node)
+        var buffer = AwesomeMessage.encode(message).finish();
+
+        // ... do something with buffer
+        // Or, encode a plain object  也可以用这种方式创建这个数据然后编码
+        var buffer = AwesomeMessage.encode({
+            awesomeField: "AwesomeString"
+        }).finish();
+
+        // ... do something with buffer
+        // Decode an Uint8Array (browser) or Buffer (node) to a message   解码处理
+        var message = AwesomeMessage.decode(buffer); 
+
+        console.log(message);
     }
 
     public connect(addr:string, port:number){
@@ -42,34 +75,14 @@ class Server extends Laya.EventDispatcher{
 		switch (nameId) {
 			case 0://登录成功
                 console.log("登录成功");
-				// this.onHeartTimer();
-				// this._heartTimer.start();
-				// this.dispatchEventWith(EventNames.USER_LOGIN_RESPONSE, false, { code: 0 });
                 this.event("LOGIN_SUCCESS");
 				break;
 			case 1://登录失败
                 console.log("登录失败");
-				// if (this.showLogs) console.log('login failed.');
-				// let errorId: number = parseInt(bytes.readUTFBytes(bytes.bytesAvailable));
-				// this.dispatchEventWith(EventNames.USER_LOGIN_RESPONSE, false, { code: 1, errorId });
                 this.event("LOGIN_FAILED");
 				break;
 			case 2://心跳包
 				console.log("收到心跳");
-				// if (this._heartTimeout) {
-				// 	clearTimeout(this._heartTimeout);
-				// 	this._heartTimeout = null;
-				// }
-				// this._lastHeart = this.tsLocal;
-
-				// let tsServer: number = bytes.readInt();
-				// this.tsServerOffset = this.tsLocal - tsServer;
-				// //console.log('on server tsServer:' + this.tsServer);
-
-				// if (!this._serverTimer.running) {
-				// 	this._serverTimer.start();
-				// 	this.checkDate(false);
-				// }
 				break;
 			default:
 				let name: string = this._protoIDs[nameId];
@@ -82,18 +95,14 @@ class Server extends Laya.EventDispatcher{
 				let module: string = name.substring(0, index);
 				let action: string = name.substring(index + 1);
 
-				//let id = bytes.readUnsignedInt();
-				//console.log('%s callId:%d', name, id);
-
-				//let body: egret.ByteArray = new egret.ByteArray();
                 let body: Laya.Byte = new Laya.Byte();
 				bytes.readBytes(body);
-				let Message = this._protoBuilderMap[module].build(name);
-				let message = Message.decode(body['buffer']);
+
+				let Message = this._protoBuilderMap[module].lookup(name);
+                let message = this._protoBuilderMap[module].decode(body.buffer);
                 this.event(name, message);
 
                 // var AwesomeMessage = root.lookup("awesomepackage.AwesomeMessage");
-                // // Create a new message  创建一条协议内容
                 // var message = AwesomeMessage.create({
                 //     awesomeField: "AwesomeString"
                 // });

@@ -1,5 +1,4 @@
 /**
- * Created by rockyl on 15/12/8.
  *
  * 协议映射表
  */
