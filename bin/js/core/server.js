@@ -19,8 +19,12 @@ var Server = /** @class */ (function (_super) {
         _this._protoBuilderUserMap = _this.protoBuf.load("../laya/proto/user.proto");
         return _this;
     }
-    Server.prototype.connect = function (addr, port) {
-        this.socket.connectByUrl(addr + ":" + port);
+    Server.prototype.test = function () {
+        this.connect("ws://172.16.154.6:7001/ws");
+        this.sendData("user.UserInfoRequest", { uid: 123 });
+    };
+    Server.prototype.connect = function (addr) {
+        this.socket.connectByUrl(addr);
         this.socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this.socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
         this.socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
@@ -39,15 +43,15 @@ var Server = /** @class */ (function (_super) {
         var len = bytes.getUint16();
         var nameId = bytes.getUint16();
         switch (nameId) {
-            case 0://登录成功
+            case 0:
                 console.log("登录成功");
                 this.event("LOGIN_SUCCESS");
                 break;
-            case 1://登录失败
+            case 1:
                 console.log("登录失败");
                 this.event("LOGIN_FAILED");
                 break;
-            case 2://心跳包
+            case 2:
                 console.log("收到心跳");
                 break;
             default:
@@ -70,6 +74,7 @@ var Server = /** @class */ (function (_super) {
                     var AwesomeMessage = root.lookup(name_1);
                     var decodeData = AwesomeMessage.decode(bytes.buffer);
                     _this.event(name_1, decodeData);
+                    console.log("here  " + decodeData);
                 });
         }
     };

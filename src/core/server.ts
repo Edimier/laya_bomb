@@ -17,8 +17,13 @@ class Server extends Laya.EventDispatcher{
         this._protoBuilderUserMap = this.protoBuf.load("../laya/proto/user.proto");
     }
 
-    public connect(addr:string, port:number){
-        this.socket.connectByUrl(addr + ":" + port);
+    public test(){
+        this.connect("ws://172.16.154.6:7001/ws");
+        this.sendData("user.UserInfoRequest", {uid:123});
+    }
+
+    public connect(addr){
+        this.socket.connectByUrl(addr);
         this.socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this.socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
         this.socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
@@ -73,6 +78,7 @@ class Server extends Laya.EventDispatcher{
                     let AwesomeMessage = root.lookup(name);
                     let decodeData = AwesomeMessage.decode(bytes.buffer);
                     this.event(name, decodeData);
+                    console.log("here  "+decodeData);
                 })
         }
     }
