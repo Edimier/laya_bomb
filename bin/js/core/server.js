@@ -1,3 +1,4 @@
+/// <reference path="../libs/proto"/>
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8,45 +9,67 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var ProtoBuf = dcodeIO.ProtoBuf;
 var Server = /** @class */ (function (_super) {
     __extends(Server, _super);
     function Server() {
         var _this = _super.call(this) || this;
         _this.socket = new Laya.Socket();
         _this._protoIDs = ProtoIDs.getMap();
-        _this._protoBuilderMap = {};
         _this.protoBuf = Laya.Browser.window.protobuf;
-        _this.protoBuf.load("../laya/proto/user.proto", _this.initUserProtoBuilder);
-        _this.protoBuf.load("../laya/proto/game.proto", _this.initGameProtoBuilder);
+        _this._protoBuilderUserMap = _this.protoBuf.load("../laya/proto/user.proto");
         return _this;
     }
-    Server.prototype.initUserProtoBuilder = function (err, root) {
-        this._protoBuilderMap["user"] = root;
-        this.testProto();
+    Server.prototype.protoEncode = function (name, data) {
+        if (!data || !name) {
+            return;
+        }
+        var protoBuilderMap = this._protoBuilderUserMap;
+        var buffer;
+        protoBuilderMap.then(function (root) {
+            var AwesomeMessage = root.lookup(name);
+            //let AwesomeMessage = root.lookup("user.UserInfoRequest");
+            //let message = AwesomeMessage.create({uid: 123});
+            var message = AwesomeMessage.create(data);
+            // Verify the message if necessary (i.e. when possibly incomplete or invalid)
+            var errMsg = AwesomeMessage.verify(message);
+            if (errMsg) {
+                console.log(errMsg);
+                return;
+                //throw Error(errMsg);
+            }
+            // Encode a message to an Uint8Array (browser) or Buffer (node)
+            buffer = AwesomeMessage.encode(message).finish();
+        });
+        if (!buffer) {
+            console.log("123");
+        }
+        return buffer;
     };
-    Server.prototype.initGameProtoBuilder = function (err, root) {
-        this._protoBuilderMap["game"] = root;
+    Server.prototype.protoDecode = function (data) {
+        if (!data) {
+            return;
+        }
+        var protoBuilderMap = this._protoBuilderUserMap;
+        var name = "user.UserInfoRequest";
+        var decodeData;
+        protoBuilderMap.then(function (root) {
+            var AwesomeMessage = root.lookup(name);
+            decodeData = AwesomeMessage.decode(data);
+        });
+        if (decodeData) {
+            console.log(decodeData);
+        }
+        return decodeData;
     };
     Server.prototype.testProto = function () {
-        var AwesomeMessage = this._protoBuilderMap["user"].lookup("user.UserInfoRequest");
-        var message = AwesomeMessage.create({
-            uid: 123
-        });
-        // Verify the message if necessary (i.e. when possibly incomplete or invalid)
-        var errMsg = AwesomeMessage.verify(message);
-        if (errMsg)
-            throw Error(errMsg);
-        // Encode a message to an Uint8Array (browser) or Buffer (node)
-        var buffer = AwesomeMessage.encode(message).finish();
-        // ... do something with buffer
-        // Or, encode a plain object  也可以用这种方式创建这个数据然后编码
-        var buffer = AwesomeMessage.encode({
-            awesomeField: "AwesomeString"
-        }).finish();
-        // ... do something with buffer
-        // Decode an Uint8Array (browser) or Buffer (node) to a message   解码处理
-        var message = AwesomeMessage.decode(buffer);
-        console.log(message);
+        var buffer = this.protoEncode("user.UserInfoRequest", { uid: 123 });
+        if (buffer) {
+            var decodeData = this.protoDecode(buffer);
+            if (decodeData) {
+                console.log(decodeData);
+            }
+        }
     };
     Server.prototype.connect = function (addr, port) {
         this.socket.connectByUrl(addr + ":" + port);
@@ -65,32 +88,14 @@ var Server = /** @class */ (function (_super) {
         switch (nameId) {
             case 0://登录成功
                 console.log("登录成功");
-                // this.onHeartTimer();
-                // this._heartTimer.start();
-                // this.dispatchEventWith(EventNames.USER_LOGIN_RESPONSE, false, { code: 0 });
                 this.event("LOGIN_SUCCESS");
                 break;
             case 1://登录失败
                 console.log("登录失败");
-                // if (this.showLogs) console.log('login failed.');
-                // let errorId: number = parseInt(bytes.readUTFBytes(bytes.bytesAvailable));
-                // this.dispatchEventWith(EventNames.USER_LOGIN_RESPONSE, false, { code: 1, errorId });
                 this.event("LOGIN_FAILED");
                 break;
             case 2://心跳包
                 console.log("收到心跳");
-                // if (this._heartTimeout) {
-                // 	clearTimeout(this._heartTimeout);
-                // 	this._heartTimeout = null;
-                // }
-                // this._lastHeart = this.tsLocal;
-                // let tsServer: number = bytes.readInt();
-                // this.tsServerOffset = this.tsLocal - tsServer;
-                // //console.log('on server tsServer:' + this.tsServer);
-                // if (!this._serverTimer.running) {
-                // 	this._serverTimer.start();
-                // 	this.checkDate(false);
-                // }
                 break;
             default:
                 var name_1 = this._protoIDs[nameId];
@@ -101,14 +106,18 @@ var Server = /** @class */ (function (_super) {
                 var index = name_1.indexOf('.');
                 var module = name_1.substring(0, index);
                 var action = name_1.substring(index + 1);
-                //let id = bytes.readUnsignedInt();
-                //console.log('%s callId:%d', name, id);
-                //let body: egret.ByteArray = new egret.ByteArray();
                 var body = new Laya.Byte();
                 bytes.readBytes(body);
-                var Message = this._protoBuilderMap[module].lookup(name_1);
-                var message = this._protoBuilderMap[module].decode(body.buffer);
-                this.event(name_1, message);
+                if (module == "user") {
+                    var Message = this._protoBuilderUserMap.lookup(name_1);
+                    var message = this._protoBuilderUserMap.decode(body.buffer);
+                    this.event(name_1, message);
+                }
+                else {
+                    var Message = this._protoBuilderGameMap.lookup(name_1);
+                    var message = this._protoBuilderGameMap.decode(body.buffer);
+                    this.event(name_1, message);
+                }
         }
     };
     Server.prototype.onConnectError = function (e) {
@@ -116,7 +125,13 @@ var Server = /** @class */ (function (_super) {
     Server.prototype.sendData = function (name, data, cb) {
         if (cb === void 0) { cb = null; }
         var head = name.substring(0, name.indexOf('.'));
-        var Message = this._protoBuilderMap[head].build(name);
+        var Message;
+        if (head == "user") {
+            Message = this._protoBuilderUserMap.build(name);
+        }
+        else {
+            Message = this._protoBuilderGameMap.build(name);
+        }
         var message = new Message(data);
         var body = new Laya.Byte(message.encodeAB());
         var pkg = new Laya.Byte();
