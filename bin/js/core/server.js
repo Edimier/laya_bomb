@@ -12,26 +12,43 @@ var Server = /** @class */ (function (_super) {
     __extends(Server, _super);
     function Server() {
         var _this = _super.call(this) || this;
-        _this.num = 100;
-        _this.socket = new Laya.Socket();
+        _this._socket = new Laya.Socket();
+        _this._socket.endian = Laya.Socket.BIG_ENDIAN;
+        //加载协议映射表
         _this._protoIDs = ProtoIDs.getMap();
-        _this.protoBuf = Laya.Browser.window.protobuf;
-        _this._protoBuilderUserMap = _this.protoBuf.load("../laya/proto/user.proto");
+        //加载协议处理
+        var protoBuf = Laya.Browser.window.protobuf;
+        _this._protoBuilderUserMap = protoBuf.load("../laya/proto/user.proto");
+        _this._protoBuilderGameMap = protoBuf.load("../laya/proto/user.proto");
         return _this;
     }
     Server.prototype.test = function () {
-        this.connect("ws://172.16.154.6:7001/ws");
-        this.sendData("user.UserInfoRequest", { uid: 123 });
+        this.connect("ws://45.76.110.156:7001/ws");
     };
     Server.prototype.connect = function (addr) {
-        this.socket.connectByUrl(addr);
-        this.socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
-        this.socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
-        this.socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
-        this.socket.on(Laya.Event.ERROR, this, this.onConnectError);
+        this._socket.connectByUrl(addr);
+        this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
+        this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
+        this._socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
+        this._socket.on(Laya.Event.ERROR, this, this.onConnectError);
     };
     Server.prototype.onSocketOpen = function () {
-        console.log("socket open");
+        //服务器有个一个基本的认证过程，以下是自己定义的认证方式
+        //认证开始
+        var uid = 23;
+        var token = "123";
+        var uuid = "123";
+        var channel_id = 123;
+        var platformId = 123;
+        var params = [uid, 1, token, uuid, channel_id, platformId].join(':');
+        var ba = new Laya.Byte();
+        ba.endian = Laya.Socket.BIG_ENDIAN;
+        ba.writeUint16(0);
+        ba.writeUTFBytes(params);
+        this._socket.send(ba.buffer);
+        this._socket.flush();
+        //认证结束
+        this.sendData("user.UserInfoRequest", { uid: uid });
     };
     Server.prototype.onSocketClose = function () {
         console.log("socket close");
@@ -40,6 +57,8 @@ var Server = /** @class */ (function (_super) {
         var _this = this;
         var bytes = new Laya.Byte();
         bytes.writeArrayBuffer(data);
+        bytes.pos = 0;
+        bytes.endian = Laya.Socket.BIG_ENDIAN;
         var len = bytes.getUint16();
         var nameId = bytes.getUint16();
         switch (nameId) {
@@ -72,9 +91,8 @@ var Server = /** @class */ (function (_super) {
                 }
                 protoBuilderMap.then(function (root) {
                     var AwesomeMessage = root.lookup(name_1);
-                    var decodeData = AwesomeMessage.decode(bytes.buffer);
+                    var decodeData = AwesomeMessage.decode(bytes.getUint8Array(4, bytes.length - 4));
                     _this.event(name_1, decodeData);
-                    console.log("here  " + decodeData);
                 });
         }
     };
@@ -87,6 +105,7 @@ var Server = /** @class */ (function (_super) {
         var index = name.indexOf('.');
         var module = name.substring(0, index);
         if (!data || !name) {
+            console.log("here");
             return;
         }
         var protoBuilderMap;
@@ -111,8 +130,8 @@ var Server = /** @class */ (function (_super) {
             pkg.writeUint16(buffer.length + 2);
             pkg.writeUint16(_this._protoIDs[name]);
             pkg.writeArrayBuffer(buffer);
-            _this.socket.send(pkg.buffer);
-            _this.socket.flush();
+            _this._socket.send(pkg.buffer);
+            _this._socket.flush();
         });
     };
     return Server;

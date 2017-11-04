@@ -12,7 +12,8 @@ class ProtoIDs{
 
         protoIDs[1001] = "user.UserInfoRequest"
         protoIDs["user.UserInfoRequest"] = 1001
-        
+        protoIDs[1002] = "user.UserInfoResonpse"
+        protoIDs["user.UserInfoResonpse"] = 1002
         return protoIDs
 	}
 }

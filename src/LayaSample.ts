@@ -4,11 +4,15 @@ class GameMain{
     constructor()
     {
         Laya.init(100,100);
-        server.on("user.UserInfoRequest", this, (msg)=>{
-            console.log(" main recieve " + msg);
-        });
 
         server.test();
+
+        server.on("user.UserInfoResonpse", this, this.handle);
+    }
+
+    private handle(data:any){
+        console.log("uid : " + data.uid);
+        console.log("nickname : " + data.nickname);
     }
 }
 new GameMain();
