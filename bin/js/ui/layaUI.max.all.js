@@ -21,7 +21,7 @@ var ui;
             _super.prototype.createChildren.call(this);
             this.createView(ui.gamebgUI.uiView);
         };
-        gamebgUI.uiView = { "type": "View", "props": { "width": 600, "height": 400 }, "child": [{ "type": "Image", "props": { "y": 0, "x": 0, "skin": "comp/star.png" } }, { "type": "Button", "props": { "y": 10, "x": 526, "width": 55, "var": "bt_close", "skin": "comp/btn_close.png", "height": 50 } }] };
+        gamebgUI.uiView = { "type": "View", "props": { "width": 600, "height": 400 }, "child": [{ "type": "Image", "props": { "y": 0, "x": 0, "skin": "comp/star.png" } }, { "type": "Button", "props": { "y": 10, "x": 558, "width": 30, "var": "bt_close", "skin": "comp/btn_close.png", "height": 30 } }] };
         return gamebgUI;
     }(View));
     ui.gamebgUI = gamebgUI;

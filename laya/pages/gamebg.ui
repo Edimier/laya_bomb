@@ -28,7 +28,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":10,"x":526,"width":55,"var":"bt_close","skin":"comp/btn_close.png","height":50},
+            "props":{"y":10,"x":558,"width":30,"var":"bt_close","skin":"comp/btn_close.png","height":30},
             "nodeParent":1,
             "label":"Button(bt_close)",
             "isDirectory":false,

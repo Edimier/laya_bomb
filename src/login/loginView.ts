@@ -26,7 +26,11 @@ class loginView extends ui.loginUI{
 
     private loginSuccess(){
 
-        Laya.stage.addChild(new gameBg() );
+        let main = new gameMain();
+
+        main.main();
+        
+        //Laya.stage.addChild(new gameBg() );
         
         this.removeSelf();
         this.destroy();

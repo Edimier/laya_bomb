@@ -5,7 +5,7 @@ module ui {
     export class gamebgUI extends View {
 		public bt_close:Laya.Button;
 
-        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"comp/star.png"}},{"type":"Button","props":{"y":10,"x":526,"width":55,"var":"bt_close","skin":"comp/btn_close.png","height":50}}]};
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"comp/star.png"}},{"type":"Button","props":{"y":10,"x":558,"width":30,"var":"bt_close","skin":"comp/btn_close.png","height":30}}]};
         constructor(){ super()}
         createChildren():void {
         

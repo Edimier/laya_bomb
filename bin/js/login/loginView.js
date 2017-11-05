@@ -37,7 +37,9 @@ var loginView = /** @class */ (function (_super) {
         }
     };
     loginView.prototype.loginSuccess = function () {
-        Laya.stage.addChild(new gameBg());
+        var main = new gameMain();
+        main.main();
+        //Laya.stage.addChild(new gameBg() );
         this.removeSelf();
         this.destroy();
         //Laya.stage.addChild(new  promptView("登陆成功！"));
