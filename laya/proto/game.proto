@@ -3,3 +3,25 @@ package game;
 message GameStartNtf {
   	required int32 session = 1;
 }
+
+message QuitGameReq {
+  	required int32 session = 1;
+	required int32 uid = 2;
+}
+
+message QuitGameRep {
+  	required int32 session = 1;
+	required int32 uid = 2;
+	required int32 result = 3;
+}
+
+message SelfMessageNtf {
+	required int32 session = 1;
+	required int32 uid = 2;
+	repeated int32 pos = 3;
+}
+
+message GameMessageNtf {
+	required int32 session = 1;
+	repeated int32 pmsg = 2;
+}

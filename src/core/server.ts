@@ -3,6 +3,8 @@ class Server extends Laya.EventDispatcher{
     private _protoIDs;
     private _protoBuilderUserMap;
     private _protoBuilderGameMap;
+    private _uid : number;
+    private _connectReady:boolean = false;
 
     constructor(){
         super();
@@ -11,7 +13,6 @@ class Server extends Laya.EventDispatcher{
 
         //加载协议映射表
         this._protoIDs = ProtoIDs.getMap();
-
         //加载协议处理
         let protoBuf =  Laya.Browser.window.protobuf;
         this._protoBuilderUserMap = protoBuf.load("../laya/proto/user.proto");
@@ -20,10 +21,13 @@ class Server extends Laya.EventDispatcher{
 
     // 测试
     public test(){
-        this.connect("ws://45.76.110.156:7001/ws");   
+        
     }
 
-    public connect(addr){
+    public connect(uid:number){
+        this._uid = uid;
+        //this.connect("ws://45.76.110.156:7001/ws");
+        let addr = "ws://45.76.110.156:7001/ws";
         this._socket.connectByUrl(addr);
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
@@ -31,34 +35,43 @@ class Server extends Laya.EventDispatcher{
         this._socket.on(Laya.Event.ERROR, this, this.onConnectError);
     }
 
-    public onSocketOpen(){
-
+    public login(uid:number){
         //服务器有个一个基本的认证过程，以下是自己定义的认证方式
         //认证开始
-        let uid = 23;
-        let token = "123";
-        let uuid = "123";
-        let channel_id = 123;
-        let platformId = 123;
-		let params = [uid,1,token,uuid,channel_id, platformId].join(':');
-
-        let ba : Laya.Byte = new Laya.Byte();
-        ba.endian = Laya.Socket.BIG_ENDIAN;
-        ba.writeUint16(0);
-        ba.writeUTFBytes(params);
-		this._socket.send(ba.buffer);
-		this._socket.flush();
+        //let uid = 23;
+        
         //认证结束
+    }
 
-        this.sendData("user.UserInfoRequest", {uid:uid});
+    public onSocketOpen(){
+        if(this._uid)
+        {
+            let token = "123";
+            let uuid = "123";
+            let channel_id = 123;
+            let platformId = 123;
+            let params = [this._uid,1,token,uuid,channel_id, platformId].join(':');
+
+            let ba : Laya.Byte = new Laya.Byte();
+            ba.endian = Laya.Socket.BIG_ENDIAN;
+            ba.writeUint16(0);
+            ba.writeUTFBytes(params);
+            this._socket.send(ba.buffer);
+            this._socket.flush();
+            this._connectReady = true;
+        } else {
+            console.log("Not have uid!");
+        }
+        // this.sendData("user.UserInfoRequest", {uid:uid});
     }
 
     public onSocketClose(){
         console.log("socket close");
+        this.event("CONNECT_CLOSE");
+        this._connectReady = false;
     }
 
     public onMessageReveived(data: any){
-
         let bytes:Laya.Byte = new Laya.Byte();
         bytes.writeArrayBuffer(data);
         bytes.pos = 0;
@@ -107,9 +120,17 @@ class Server extends Laya.EventDispatcher{
 
     public onConnectError(e: Event){
         console.log("connect error");
+        this.event("CONNECT_ERROR");
+        this._connectReady = false;
     }
 
     public sendData(name: string, data: any, cb: Function = null): void {
+        if(!this._connectReady){
+            console.log("sendData socket close");
+            this.event("CONNECT_CLOSE");
+            return;
+        }
+
         let index: number = name.indexOf('.');
         let module: string = name.substring(0, index);
 		if(!data || !name){
@@ -145,3 +166,5 @@ class Server extends Laya.EventDispatcher{
         })
 	}
 }
+
+let server = new Server();

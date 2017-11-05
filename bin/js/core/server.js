@@ -12,6 +12,7 @@ var Server = /** @class */ (function (_super) {
     __extends(Server, _super);
     function Server() {
         var _this = _super.call(this) || this;
+        _this._connectReady = false;
         _this._socket = new Laya.Socket();
         _this._socket.endian = Laya.Socket.BIG_ENDIAN;
         //加载协议映射表
@@ -22,36 +23,49 @@ var Server = /** @class */ (function (_super) {
         _this._protoBuilderGameMap = protoBuf.load("../laya/proto/user.proto");
         return _this;
     }
+    // 测试
     Server.prototype.test = function () {
-        this.connect("ws://45.76.110.156:7001/ws");
     };
-    Server.prototype.connect = function (addr) {
+    Server.prototype.connect = function (uid) {
+        this._uid = uid;
+        //this.connect("ws://45.76.110.156:7001/ws");
+        var addr = "ws://45.76.110.156:7001/ws";
         this._socket.connectByUrl(addr);
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
         this._socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
         this._socket.on(Laya.Event.ERROR, this, this.onConnectError);
     };
-    Server.prototype.onSocketOpen = function () {
+    Server.prototype.login = function (uid) {
         //服务器有个一个基本的认证过程，以下是自己定义的认证方式
         //认证开始
-        var uid = 23;
-        var token = "123";
-        var uuid = "123";
-        var channel_id = 123;
-        var platformId = 123;
-        var params = [uid, 1, token, uuid, channel_id, platformId].join(':');
-        var ba = new Laya.Byte();
-        ba.endian = Laya.Socket.BIG_ENDIAN;
-        ba.writeUint16(0);
-        ba.writeUTFBytes(params);
-        this._socket.send(ba.buffer);
-        this._socket.flush();
+        //let uid = 23;
         //认证结束
-        this.sendData("user.UserInfoRequest", { uid: uid });
+    };
+    Server.prototype.onSocketOpen = function () {
+        if (this._uid) {
+            var token = "123";
+            var uuid = "123";
+            var channel_id = 123;
+            var platformId = 123;
+            var params = [this._uid, 1, token, uuid, channel_id, platformId].join(':');
+            var ba = new Laya.Byte();
+            ba.endian = Laya.Socket.BIG_ENDIAN;
+            ba.writeUint16(0);
+            ba.writeUTFBytes(params);
+            this._socket.send(ba.buffer);
+            this._socket.flush();
+            this._connectReady = true;
+        }
+        else {
+            console.log("Not have uid!");
+        }
+        // this.sendData("user.UserInfoRequest", {uid:uid});
     };
     Server.prototype.onSocketClose = function () {
         console.log("socket close");
+        this.event("CONNECT_CLOSE");
+        this._connectReady = false;
     };
     Server.prototype.onMessageReveived = function (data) {
         var _this = this;
@@ -98,10 +112,17 @@ var Server = /** @class */ (function (_super) {
     };
     Server.prototype.onConnectError = function (e) {
         console.log("connect error");
+        this.event("CONNECT_ERROR");
+        this._connectReady = false;
     };
     Server.prototype.sendData = function (name, data, cb) {
         var _this = this;
         if (cb === void 0) { cb = null; }
+        if (!this._connectReady) {
+            console.log("sendData socket close");
+            this.event("CONNECT_CLOSE");
+            return;
+        }
         var index = name.indexOf('.');
         var module = name.substring(0, index);
         if (!data || !name) {
@@ -136,4 +157,5 @@ var Server = /** @class */ (function (_super) {
     };
     return Server;
 }(Laya.EventDispatcher));
+var server = new Server();
 //# sourceMappingURL=server.js.map

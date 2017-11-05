@@ -1,0 +1,44 @@
+class loginView extends ui.loginUI{
+    constructor(){
+        super();
+        this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
+        this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);
+        server.on("LOGIN_SUCCESS", this, this.loginSuccess);
+        server.on("LOGIN_FAILED", this, this.loginSuccess);
+        server.on("CONNECT_CLOSE", this, this.connectClose);
+        server.on("CONNECT_ERROR", this, this.connectClose);
+    }
+
+    private handleLogin(){
+        let data = this.bt_input.text;
+        console.log(data);
+        if(data){
+            let uid = Number(data);
+            if(uid < 1 || uid > 100){
+                Laya.stage.addChild(new  promptView("输入的 uid 不在1~100之间！！"));
+            } else {
+                server.connect(uid);
+            }
+        } else {
+            Laya.stage.addChild(new  promptView("请输入uid"));
+        }
+    }
+
+    private loginSuccess(){
+
+        Laya.stage.addChild(new gameBg() );
+        
+        this.removeSelf();
+        this.destroy();
+
+        //Laya.stage.addChild(new  promptView("登陆成功！"));
+    }
+
+    private loginFailed(){
+        Laya.stage.addChild(new  promptView("登陆失败！"));
+    }
+
+    private connectClose(){
+        Laya.stage.addChild(new promptView("连接已经断开，请重新登陆！"));
+    }
+}
