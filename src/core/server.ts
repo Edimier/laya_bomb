@@ -16,7 +16,7 @@ class Server extends Laya.EventDispatcher{
         //加载协议处理
         let protoBuf =  Laya.Browser.window.protobuf;
         this._protoBuilderUserMap = protoBuf.load("../laya/proto/user.proto");
-        this._protoBuilderGameMap = protoBuf.load("../laya/proto/user.proto");
+        this._protoBuilderGameMap = protoBuf.load("../laya/proto/game.proto");
     }
 
     // 测试
@@ -27,7 +27,7 @@ class Server extends Laya.EventDispatcher{
     public connect(uid:number){
         this._uid = uid;
         //this.connect("ws://45.76.110.156:7001/ws");
-        let addr = "ws://45.76.110.156:7001/ws";
+        let addr = "ws://172.16.154.6:7001/ws";
         this._socket.connectByUrl(addr);
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
@@ -84,7 +84,7 @@ class Server extends Laya.EventDispatcher{
 		switch (nameId) {
 			case 0:
                 console.log("登录成功");
-                this.event("LOGIN_SUCCESS");
+                this.event("LOGIN_SUCCESS", this._uid);
 				break;
 			case 1:
                 console.log("登录失败");
@@ -112,8 +112,13 @@ class Server extends Laya.EventDispatcher{
                 }
                 protoBuilderMap.then( (root)=>{
                     let AwesomeMessage = root.lookup(name);
-                    let decodeData = AwesomeMessage.decode( bytes.getUint8Array(4, bytes.length - 4));
-                    this.event(name, decodeData);
+                    if(AwesomeMessage){
+                        //console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                        let decodeData = AwesomeMessage.decode( bytes.getUint8Array(4, bytes.length - 4));
+                        this.event(name, decodeData);
+                    } else {
+                        console.log("Can not find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                    }
                 })
         }
     }

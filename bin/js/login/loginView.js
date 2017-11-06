@@ -15,7 +15,7 @@ var loginView = /** @class */ (function (_super) {
         _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
         _this.bt_login.on(Laya.Event.CLICK, _this, _this.handleLogin);
         server.on("LOGIN_SUCCESS", _this, _this.loginSuccess);
-        server.on("LOGIN_FAILED", _this, _this.loginSuccess);
+        server.on("LOGIN_FAILED", _this, _this.loginFailed);
         server.on("CONNECT_CLOSE", _this, _this.connectClose);
         server.on("CONNECT_ERROR", _this, _this.connectClose);
         return _this;
@@ -36,9 +36,9 @@ var loginView = /** @class */ (function (_super) {
             Laya.stage.addChild(new promptView("请输入uid"));
         }
     };
-    loginView.prototype.loginSuccess = function () {
+    loginView.prototype.loginSuccess = function (uid) {
         var main = new gameMain();
-        main.main();
+        main.main(uid);
         //Laya.stage.addChild(new gameBg() );
         this.removeSelf();
         this.destroy();

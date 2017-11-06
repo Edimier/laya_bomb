@@ -20,7 +20,7 @@ var Server = /** @class */ (function (_super) {
         //加载协议处理
         var protoBuf = Laya.Browser.window.protobuf;
         _this._protoBuilderUserMap = protoBuf.load("../laya/proto/user.proto");
-        _this._protoBuilderGameMap = protoBuf.load("../laya/proto/user.proto");
+        _this._protoBuilderGameMap = protoBuf.load("../laya/proto/game.proto");
         return _this;
     }
     // 测试
@@ -29,7 +29,7 @@ var Server = /** @class */ (function (_super) {
     Server.prototype.connect = function (uid) {
         this._uid = uid;
         //this.connect("ws://45.76.110.156:7001/ws");
-        var addr = "ws://45.76.110.156:7001/ws";
+        var addr = "ws://172.16.154.6:7001/ws";
         this._socket.connectByUrl(addr);
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
@@ -78,7 +78,7 @@ var Server = /** @class */ (function (_super) {
         switch (nameId) {
             case 0:
                 console.log("登录成功");
-                this.event("LOGIN_SUCCESS");
+                this.event("LOGIN_SUCCESS", this._uid);
                 break;
             case 1:
                 console.log("登录失败");
@@ -94,10 +94,10 @@ var Server = /** @class */ (function (_super) {
                     break;
                 }
                 var index = name_1.indexOf('.');
-                var module = name_1.substring(0, index);
-                var action = name_1.substring(index + 1);
+                var module_1 = name_1.substring(0, index);
+                var action_1 = name_1.substring(index + 1);
                 var protoBuilderMap = void 0;
-                if (module == "user") {
+                if (module_1 == "user") {
                     protoBuilderMap = this._protoBuilderUserMap;
                 }
                 else {
@@ -105,8 +105,14 @@ var Server = /** @class */ (function (_super) {
                 }
                 protoBuilderMap.then(function (root) {
                     var AwesomeMessage = root.lookup(name_1);
-                    var decodeData = AwesomeMessage.decode(bytes.getUint8Array(4, bytes.length - 4));
-                    _this.event(name_1, decodeData);
+                    if (AwesomeMessage) {
+                        //console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                        var decodeData = AwesomeMessage.decode(bytes.getUint8Array(4, bytes.length - 4));
+                        _this.event(name_1, decodeData);
+                    }
+                    else {
+                        console.log("Can not find name : " + name_1 + ", id = " + nameId + ", module:" + module_1 + ",action:" + action_1);
+                    }
                 });
         }
     };

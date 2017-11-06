@@ -7,12 +7,13 @@ message GameStartNtf {
 message QuitGameReq {
   	required int32 session = 1;
 	required int32 uid = 2;
+	required int32 status = 3;
 }
 
 message QuitGameRep {
   	required int32 session = 1;
 	required int32 uid = 2;
-	required int32 result = 3;
+	required int32 status = 3;
 }
 
 message SelfMessageNtf {
@@ -24,4 +25,8 @@ message SelfMessageNtf {
 message GameMessageNtf {
 	required int32 session = 1;
 	repeated int32 pmsg = 2;
+}
+
+message SetSession {
+	required int32 session = 1;	
 }

@@ -18,17 +18,20 @@ class ProtoIDs{
         protoIDs["game.SelfMessageNtf"] = 2004
         protoIDs[2005] = "game.GameMessageNtf"
         protoIDs["game.GameMessageNtf"] = 2005
+        protoIDs[2006] = "game.SetSession"
+        protoIDs["game.SetSession"] = 2006
 
         protoIDs[1001] = "user.UserInfoRequest"
         protoIDs["user.UserInfoRequest"] = 1001
-        
+
         protoIDs[1002] = "user.UserInfoResonpse"
         protoIDs["user.UserInfoResonpse"] = 1002
         protoIDs[1003] = "user.JoinReq"
         protoIDs["user.JoinReq"] = 1003
-        protoIDs[1003] = "user.JoinRep"
-        protoIDs["user.JoinRep"] = 1003
-
+        protoIDs[1004] = "user.JoinRep"
+        protoIDs["user.JoinRep"] = 1004
+        protoIDs[1005] = "user.NotifyKickout"
+        protoIDs["user.NotifyKickout"] = 1005
 
         return protoIDs
 	}

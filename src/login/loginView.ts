@@ -4,7 +4,7 @@ class loginView extends ui.loginUI{
         this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
         this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);
         server.on("LOGIN_SUCCESS", this, this.loginSuccess);
-        server.on("LOGIN_FAILED", this, this.loginSuccess);
+        server.on("LOGIN_FAILED", this, this.loginFailed);
         server.on("CONNECT_CLOSE", this, this.connectClose);
         server.on("CONNECT_ERROR", this, this.connectClose);
     }
@@ -24,11 +24,10 @@ class loginView extends ui.loginUI{
         }
     }
 
-    private loginSuccess(){
+    private loginSuccess(uid:any){
 
         let main = new gameMain();
-
-        main.main();
+        main.main(uid);
         
         //Laya.stage.addChild(new gameBg() );
         
