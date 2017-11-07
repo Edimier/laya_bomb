@@ -33,14 +33,14 @@ var gameMain = /** @class */ (function () {
         //         }
         //     }
         // }
-        console.log(msg.pmsg.length);
+        //console.log(msg.pmsg.length);
         for (var i = 0; i < msg.pmsg.length; i = i + 3) {
-            console.log(msg.pmsg[i]);
-            console.log(msg.pmsg[i + 1]);
-            console.log(msg.pmsg[i + 2]);
-            console.log(this._uid);
-            console.log(typeof this._uid);
-            console.log(typeof msg.pmsg[i]);
+            // console.log(msg.pmsg[ i ]);
+            // console.log(msg.pmsg[i + 1]);
+            // console.log(msg.pmsg[i + 2]);
+            // console.log(this._uid);
+            // console.log(typeof this._uid);
+            // console.log(typeof msg.pmsg[ i ]);
             if (msg.pmsg[i] != this._uid) {
                 var find = false;
                 for (var _i = 0, _a = this._players; _i < _a.length; _i++) {

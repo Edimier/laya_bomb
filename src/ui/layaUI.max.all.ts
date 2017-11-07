@@ -11,9 +11,7 @@ module ui {
         
             super.createChildren();
             this.createView(ui.gamebgUI.uiView);
-
         }
-
     }
 }
 
@@ -28,9 +26,7 @@ module ui {
         
             super.createChildren();
             this.createView(ui.loginUI.uiView);
-
         }
-
     }
 }
 
@@ -45,8 +41,6 @@ module ui {
         
             super.createChildren();
             this.createView(ui.promptUI.uiView);
-
         }
-
     }
 }

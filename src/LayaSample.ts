@@ -20,10 +20,15 @@ class GameMain{
     private loadResource(){
         let uiResArry = [
             {url : "res/atlas/comp.atlas", type : Laya.Loader.ATLAS},
+            {url : "res/proto/user.proto"},
+            {url : "res/proto/game.proto"},
         ];
         Laya.loader.load(uiResArry, Laya.Handler.create(this, ()=>{
             //this._gameMain.main();
+
+            server = new Server();
             Laya.stage.addChild(new loginView());
+            
             //this.test();
         }));
     }
@@ -33,8 +38,8 @@ class GameMain{
         sp.loadImage("comp/a2.png");
         Laya.stage.addChild(sp);
         sp.on(Laya.Event.MOUSE_DOWN, this, ()=>{
-            console.log("x:" + Laya.stage.mouseX);
-            console.log("y:" + Laya.stage.mouseY);
+            // console.log("x:" + Laya.stage.mouseX);
+            // console.log("y:" + Laya.stage.mouseY);
             sp.startDrag();
         });
     }

@@ -22,7 +22,6 @@ var loginView = /** @class */ (function (_super) {
     }
     loginView.prototype.handleLogin = function () {
         var data = this.bt_input.text;
-        console.log(data);
         if (data) {
             var uid = Number(data);
             if (uid < 1 || uid > 100) {

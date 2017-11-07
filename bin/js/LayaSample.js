@@ -14,14 +14,16 @@ var GameMain = /** @class */ (function () {
         Laya.stage.bgColor = "#232628";
     };
     GameMain.prototype.loadResource = function () {
-        var _this = this;
         var uiResArry = [
             { url: "res/atlas/comp.atlas", type: Laya.Loader.ATLAS },
+            { url: "res/proto/user.proto" },
+            { url: "res/proto/game.proto" },
         ];
         Laya.loader.load(uiResArry, Laya.Handler.create(this, function () {
             //this._gameMain.main();
-            //Laya.stage.addChild(new loginView());
-            _this.test();
+            server = new Server();
+            Laya.stage.addChild(new loginView());
+            //this.test();
         }));
     };
     GameMain.prototype.test = function () {
@@ -29,8 +31,8 @@ var GameMain = /** @class */ (function () {
         sp.loadImage("comp/a2.png");
         Laya.stage.addChild(sp);
         sp.on(Laya.Event.MOUSE_DOWN, this, function () {
-            console.log("x:" + Laya.stage.mouseX);
-            console.log("y:" + Laya.stage.mouseY);
+            // console.log("x:" + Laya.stage.mouseX);
+            // console.log("y:" + Laya.stage.mouseY);
             sp.startDrag();
         });
     };

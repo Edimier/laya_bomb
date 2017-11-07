@@ -15,8 +15,8 @@ class Server extends Laya.EventDispatcher{
         this._protoIDs = ProtoIDs.getMap();
         //加载协议处理
         let protoBuf =  Laya.Browser.window.protobuf;
-        this._protoBuilderUserMap = protoBuf.load("../laya/proto/user.proto");
-        this._protoBuilderGameMap = protoBuf.load("../laya/proto/game.proto");
+        this._protoBuilderUserMap = protoBuf.load("res/proto/user.proto");
+        this._protoBuilderGameMap = protoBuf.load("res/proto/game.proto");
     }
 
     // 测试
@@ -139,7 +139,7 @@ class Server extends Laya.EventDispatcher{
         let index: number = name.indexOf('.');
         let module: string = name.substring(0, index);
 		if(!data || !name){
-            console.log("here");
+            console.log(" send data not have name or data");
             return;
         }
 
@@ -152,24 +152,28 @@ class Server extends Laya.EventDispatcher{
 
         protoBuilderMap.then( (root)=>{
             let AwesomeMessage = root.lookup(name);
-            let message = AwesomeMessage.create(data);
-            let errMsg = AwesomeMessage.verify(message);
-            if (errMsg){
-                console.log(errMsg);
-                return;
-                //throw Error(errMsg);
-            }
-            let buffer = AwesomeMessage.encode(message).finish();
-            let pkg: Laya.Byte = new Laya.Byte();
-            pkg.endian = Laya.Byte.BIG_ENDIAN;
-            pkg.writeUint16(buffer.length + 2);
-            pkg.writeUint16(this._protoIDs[name]);
-            pkg.writeArrayBuffer(buffer);
+            if(AwesomeMessage){
+                let message = AwesomeMessage.create(data);
+                let errMsg = AwesomeMessage.verify(message);
+                if (errMsg){
+                    console.log(errMsg);
+                    return;
+                    //throw Error(errMsg);
+                }
+                let buffer = AwesomeMessage.encode(message).finish();
+                let pkg: Laya.Byte = new Laya.Byte();
+                pkg.endian = Laya.Byte.BIG_ENDIAN;
+                pkg.writeUint16(buffer.length + 2);
+                pkg.writeUint16(this._protoIDs[name]);
+                pkg.writeArrayBuffer(buffer);
 
-            this._socket.send(pkg.buffer);
-            this._socket.flush();
+                this._socket.send(pkg.buffer);
+                this._socket.flush();
+            } else {
+                console.log("encode error " + name);
+            }
         })
 	}
 }
 
-let server = new Server();
+let server;

@@ -19,8 +19,8 @@ var Server = /** @class */ (function (_super) {
         _this._protoIDs = ProtoIDs.getMap();
         //加载协议处理
         var protoBuf = Laya.Browser.window.protobuf;
-        _this._protoBuilderUserMap = protoBuf.load("../laya/proto/user.proto");
-        _this._protoBuilderGameMap = protoBuf.load("../laya/proto/game.proto");
+        _this._protoBuilderUserMap = protoBuf.load("res/proto/user.proto");
+        _this._protoBuilderGameMap = protoBuf.load("res/proto/game.proto");
         return _this;
     }
     // 测试
@@ -132,7 +132,7 @@ var Server = /** @class */ (function (_super) {
         var index = name.indexOf('.');
         var module = name.substring(0, index);
         if (!data || !name) {
-            console.log("here");
+            console.log(" send data not have name or data");
             return;
         }
         var protoBuilderMap;
@@ -144,24 +144,29 @@ var Server = /** @class */ (function (_super) {
         }
         protoBuilderMap.then(function (root) {
             var AwesomeMessage = root.lookup(name);
-            var message = AwesomeMessage.create(data);
-            var errMsg = AwesomeMessage.verify(message);
-            if (errMsg) {
-                console.log(errMsg);
-                return;
-                //throw Error(errMsg);
+            if (AwesomeMessage) {
+                var message = AwesomeMessage.create(data);
+                var errMsg = AwesomeMessage.verify(message);
+                if (errMsg) {
+                    console.log(errMsg);
+                    return;
+                    //throw Error(errMsg);
+                }
+                var buffer = AwesomeMessage.encode(message).finish();
+                var pkg = new Laya.Byte();
+                pkg.endian = Laya.Byte.BIG_ENDIAN;
+                pkg.writeUint16(buffer.length + 2);
+                pkg.writeUint16(_this._protoIDs[name]);
+                pkg.writeArrayBuffer(buffer);
+                _this._socket.send(pkg.buffer);
+                _this._socket.flush();
             }
-            var buffer = AwesomeMessage.encode(message).finish();
-            var pkg = new Laya.Byte();
-            pkg.endian = Laya.Byte.BIG_ENDIAN;
-            pkg.writeUint16(buffer.length + 2);
-            pkg.writeUint16(_this._protoIDs[name]);
-            pkg.writeArrayBuffer(buffer);
-            _this._socket.send(pkg.buffer);
-            _this._socket.flush();
+            else {
+                console.log("encode error " + name);
+            }
         });
     };
     return Server;
 }(Laya.EventDispatcher));
-var server = new Server();
+var server;
 //# sourceMappingURL=server.js.map

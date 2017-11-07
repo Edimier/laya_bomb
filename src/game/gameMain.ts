@@ -44,15 +44,15 @@ class gameMain{
         //     }
         // }
 
-        console.log(msg.pmsg.length);
+        //console.log(msg.pmsg.length);
 
         for(let i = 0; i < msg.pmsg.length; i = i + 3){
-            console.log(msg.pmsg[ i ]);
-            console.log(msg.pmsg[i + 1]);
-            console.log(msg.pmsg[i + 2]);
-            console.log(this._uid);
-            console.log(typeof this._uid);
-            console.log(typeof msg.pmsg[ i ]);
+            // console.log(msg.pmsg[ i ]);
+            // console.log(msg.pmsg[i + 1]);
+            // console.log(msg.pmsg[i + 2]);
+            // console.log(this._uid);
+            // console.log(typeof this._uid);
+            // console.log(typeof msg.pmsg[ i ]);
             if( msg.pmsg[i] != this._uid){
                 let find:boolean = false;
                 for(let p of this._players){

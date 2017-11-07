@@ -11,7 +11,6 @@ class loginView extends ui.loginUI{
 
     private handleLogin(){
         let data = this.bt_input.text;
-        console.log(data);
         if(data){
             let uid = Number(data);
             if(uid < 1 || uid > 100){
