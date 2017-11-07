@@ -27,7 +27,7 @@ class Server extends Laya.EventDispatcher{
     public connect(uid:number){
         this._uid = uid;
         //this.connect("ws://45.76.110.156:7001/ws");
-        let addr = "ws://172.16.154.6:7001/ws";
+        let addr = "ws://45.76.110.156:7001/ws";
         this._socket.connectByUrl(addr);
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);

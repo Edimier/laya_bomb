@@ -15,6 +15,7 @@ var gameMain = /** @class */ (function () {
         }
     };
     gameMain.prototype.GameMessageNtf = function (msg) {
+        var _this = this;
         if (!this._bg) {
             this._bg = new gameBg(this);
             Laya.stage.addChild(this._bg);
@@ -55,7 +56,10 @@ var gameMain = /** @class */ (function () {
                 if (!find) {
                     var p = new player();
                     Laya.stage.addChild(p);
-                    p.graphics.drawCircle(msg.pmsg[i + 1], msg.pmsg[i + 2], 20, "#FF0000");
+                    //p.graphics.drawCircle(msg.pmsg[i+1], msg.pmsg[i+2], 20, "#FF0000");
+                    var res = "comp/a" + rand(1, 4) + ".png";
+                    p.loadImage(res);
+                    p.pos(msg.pmsg[i + 1], msg.pmsg[i + 2]);
                     p._uid = msg.pmsg[i];
                     this._players.push(p);
                 }
@@ -64,7 +68,14 @@ var gameMain = /** @class */ (function () {
                 if (!this._self) {
                     this._self = new player();
                     Laya.stage.addChild(this._self);
-                    this._self.graphics.drawCircle(msg.pmsg[i + 1], msg.pmsg[i + 2], 20, "#FF0000");
+                    var res = "comp/a" + rand(1, 4) + ".png";
+                    this._self.loadImage(res);
+                    this._self.pos(msg.pmsg[i + 1], msg.pmsg[i + 2]);
+                    this._self.on(Laya.Event.MOUSE_DOWN, this, function () {
+                        _this._self.startDrag();
+                        server.sendData("game.SelfMessageNtf", { session: _this._session, uid: _this._uid, pos: [Laya.stage.mouseX, Laya.stage.mouseY] });
+                    });
+                    //this._self.graphics.drawCircle(msg.pmsg[i+1], msg.pmsg[i+2], 20, "#FF0000");
                 }
             }
         }

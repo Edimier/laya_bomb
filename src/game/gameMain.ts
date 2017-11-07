@@ -43,7 +43,6 @@ class gameMain{
         //         }
         //     }
         // }
-        
 
         console.log(msg.pmsg.length);
 
@@ -59,7 +58,6 @@ class gameMain{
                 for(let p of this._players){
                     if(p._uid == msg.pmsg[i]) {
                         if(p.x != msg.pmsg[i+1] && p.y != msg.pmsg[i+2]){
-
                             p.pos(msg.pmsg[i+1], msg.pmsg[i+2]);
                         }
                         find = true;
@@ -69,15 +67,30 @@ class gameMain{
                 if( ! find){
                     let p = new player();
                     Laya.stage.addChild(p);
-                    p.graphics.drawCircle(msg.pmsg[i+1], msg.pmsg[i+2], 20, "#FF0000");
+                    //p.graphics.drawCircle(msg.pmsg[i+1], msg.pmsg[i+2], 20, "#FF0000");
+
+                    let res = "comp/a" + rand(1,4) + ".png";
+
+                    p.loadImage(res);
+                    
+                    p.pos(msg.pmsg[i+1], msg.pmsg[i+2]);
+
                     p._uid = msg.pmsg[i];
+
                     this._players.push(p);
                 }
             } else {
                 if( ! this._self){
                     this._self = new player();
                     Laya.stage.addChild(this._self);
-                    this._self.graphics.drawCircle(msg.pmsg[i+1], msg.pmsg[i+2], 20, "#FF0000");
+                    let res = "comp/a" + rand(1,4) + ".png";
+                    this._self.loadImage(res);
+                    this._self.pos(msg.pmsg[i+1], msg.pmsg[i+2]);
+                    this._self.on(Laya.Event.MOUSE_DOWN, this, ()=>{
+                        this._self.startDrag();
+                        server.sendData("game.SelfMessageNtf", {session:this._session, uid:this._uid, pos:[Laya.stage.mouseX, Laya.stage.mouseY]});
+                    });
+                    //this._self.graphics.drawCircle(msg.pmsg[i+1], msg.pmsg[i+2], 20, "#FF0000");
                 }
             }
         }

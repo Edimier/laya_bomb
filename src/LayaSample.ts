@@ -23,9 +23,20 @@ class GameMain{
         ];
         Laya.loader.load(uiResArry, Laya.Handler.create(this, ()=>{
             //this._gameMain.main();
-
             Laya.stage.addChild(new loginView());
+            //this.test();
         }));
+    }
+
+    private test(){
+        let sp = new Laya.Sprite();
+        sp.loadImage("comp/a2.png");
+        Laya.stage.addChild(sp);
+        sp.on(Laya.Event.MOUSE_DOWN, this, ()=>{
+            console.log("x:" + Laya.stage.mouseX);
+            console.log("y:" + Laya.stage.mouseY);
+            sp.startDrag();
+        });
     }
 }
 new GameMain();

@@ -29,7 +29,7 @@ var Server = /** @class */ (function (_super) {
     Server.prototype.connect = function (uid) {
         this._uid = uid;
         //this.connect("ws://45.76.110.156:7001/ws");
-        var addr = "ws://172.16.154.6:7001/ws";
+        var addr = "ws://45.76.110.156:7001/ws";
         this._socket.connectByUrl(addr);
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
