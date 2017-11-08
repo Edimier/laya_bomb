@@ -8,6 +8,7 @@ class gameBg extends ui.gamebgUI{
     }
 
     private handleClose(){
+        server.logout();
         Laya.stage.addChild(new loginView());
         if(this._father){
             this._father.destroy();

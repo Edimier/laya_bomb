@@ -5,7 +5,7 @@ class loginView extends ui.loginUI{
         this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);
         server.on("LOGIN_SUCCESS", this, this.loginSuccess);
         server.on("LOGIN_FAILED", this, this.loginFailed);
-        server.on("CONNECT_CLOSE", this, this.connectClose);
+        //server.on("CONNECT_CLOSE", this, this.connectClose);
         server.on("CONNECT_ERROR", this, this.connectClose);
     }
 

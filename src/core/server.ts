@@ -11,6 +11,12 @@ class Server extends Laya.EventDispatcher{
         this._socket = new Laya.Socket();
         this._socket.endian = Laya.Socket.BIG_ENDIAN;
 
+
+        this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
+        this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
+        this._socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
+        this._socket.on(Laya.Event.ERROR, this, this.onConnectError);
+
         //加载协议映射表
         this._protoIDs = ProtoIDs.getMap();
         //加载协议处理
@@ -24,23 +30,19 @@ class Server extends Laya.EventDispatcher{
         
     }
 
+    public logout(){
+        this._socket.close();
+    }
+
     public connect(uid:number){
         this._uid = uid;
         //this.connect("ws://45.76.110.156:7001/ws");
-        let addr = "ws://45.76.110.156:7001/ws";
+        let addr = "ws://172.16.154.6:7001/ws";
         this._socket.connectByUrl(addr);
-        this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
-        this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
-        this._socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
-        this._socket.on(Laya.Event.ERROR, this, this.onConnectError);
+        
     }
 
     public login(uid:number){
-        //服务器有个一个基本的认证过程，以下是自己定义的认证方式
-        //认证开始
-        //let uid = 23;
-        
-        //认证结束
     }
 
     public onSocketOpen(){
