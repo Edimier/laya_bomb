@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":303,
+    "selecteID":306,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -128,6 +128,19 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":305,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":163,"x":54,"width":39,"var":"bt_bomb","skin":"comp/button.png","label":"bomb","height":30},
+            "nodeParent":1,
+            "label":"Button(bt_bomb)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":306,
             "child":[
                 ]
         }],

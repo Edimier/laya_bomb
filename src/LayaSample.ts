@@ -23,11 +23,10 @@ class GameMain{
             {url : "res/proto/game.proto"},
         ];
         Laya.loader.load(uiResArry, Laya.Handler.create(this, ()=>{
-            server = new Server();
+            //server = new Server();
             //Laya.stage.addChild(new loginView());
 
             let test = new testMap();
-
             test.test();
             //this.test();
             //this.test2();
