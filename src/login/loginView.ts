@@ -23,17 +23,15 @@ class loginView extends ui.loginUI{
         }
     }
 
-    private loginSuccess(uid:any){
-
-        let main = new gameMain();
-        main.main(uid);
-        
-        //Laya.stage.addChild(new gameBg() );
-        
+    private destroySelf(){
         this.removeSelf();
         this.destroy();
+    }
 
-        //Laya.stage.addChild(new  promptView("登陆成功！"));
+    private loginSuccess(uid:any){
+        let game_main = new gameMain();
+        game_main.mainProcess(uid);
+        this.destroySelf();
     }
 
     private loginFailed(){

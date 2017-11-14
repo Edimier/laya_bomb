@@ -14,7 +14,6 @@ var promptView = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
         _this.bt_return.on(Laya.Event.CLICK, _this, _this.handleClose);
-        //this.bt_close.on(Laya.Event.CLICK, this, this.handleClose);
         if (msg) {
             _this.bt_prompt.text = msg;
             _this.bt_prompt.fontSize = 15;

@@ -3,15 +3,25 @@ import View=laya.ui.View;
 import Dialog=laya.ui.Dialog;
 module ui {
     export class gamebgUI extends View {
-		public bt_close:Laya.Button;
+		public bt_game_bg:Laya.Image;
+		public m_score1:Laya.Label;
+		public m_scoreLable1:Laya.Image;
+		public m_score2:Laya.Label;
+		public m_scoreLable2:Laya.Image;
+		public bt_up:Laya.Button;
+		public bt_down:Laya.Button;
+		public bt_right:Laya.Button;
+		public bt_left:Laya.Button;
 
-        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"comp/star.png"}},{"type":"Button","props":{"y":10,"x":558,"width":30,"var":"bt_close","skin":"comp/btn_close.png","height":30}}]};
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"bt_game_bg","skin":"comp/bg2.png","name":"gamebg"}},{"type":"Label","props":{"y":50,"x":202,"width":67,"var":"m_score1","height":25,"borderColor":"#40e20d"}},{"type":"Image","props":{"y":50,"x":146,"width":47,"var":"m_scoreLable1","skin":"comp/score.png","name":"scoreLable1","height":39}},{"type":"Label","props":{"y":50,"x":370,"width":67,"var":"m_score2","height":25,"borderColor":"#40e20d"}},{"type":"Image","props":{"y":50,"x":314,"width":47,"var":"m_scoreLable2","skin":"comp/score.png","name":"scoreLable2","height":39}},{"type":"Button","props":{"y":208,"x":80,"width":30,"var":"bt_up","skin":"comp/button.png","label":"up","height":30}},{"type":"Button","props":{"y":263,"x":80,"width":30,"var":"bt_down","skin":"comp/button.png","label":"down","height":30}},{"type":"Button","props":{"y":237,"x":111,"width":30,"var":"bt_right","skin":"comp/button.png","label":"right","height":30}},{"type":"Button","props":{"y":237,"x":49,"width":30,"var":"bt_left","skin":"comp/button.png","label":"lefit","height":30}}]};
         constructor(){ super()}
         createChildren():void {
         
             super.createChildren();
             this.createView(ui.gamebgUI.uiView);
+
         }
+
     }
 }
 
@@ -26,7 +36,9 @@ module ui {
         
             super.createChildren();
             this.createView(ui.loginUI.uiView);
+
         }
+
     }
 }
 
@@ -41,6 +53,8 @@ module ui {
         
             super.createChildren();
             this.createView(ui.promptUI.uiView);
+
         }
+
     }
 }

@@ -35,13 +35,14 @@ var loginView = /** @class */ (function (_super) {
             Laya.stage.addChild(new promptView("请输入uid"));
         }
     };
-    loginView.prototype.loginSuccess = function (uid) {
-        var main = new gameMain();
-        main.main(uid);
-        //Laya.stage.addChild(new gameBg() );
+    loginView.prototype.destroySelf = function () {
         this.removeSelf();
         this.destroy();
-        //Laya.stage.addChild(new  promptView("登陆成功！"));
+    };
+    loginView.prototype.loginSuccess = function (uid) {
+        var game_main = new gameMain();
+        game_main.mainProcess(uid);
+        this.destroySelf();
     };
     loginView.prototype.loginFailed = function () {
         Laya.stage.addChild(new promptView("登陆失败！"));

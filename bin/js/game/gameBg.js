@@ -12,18 +12,21 @@ var gameBg = /** @class */ (function (_super) {
     __extends(gameBg, _super);
     function gameBg(f) {
         var _this = _super.call(this) || this;
-        _this._father = f;
-        _this.bt_close.on(Laya.Event.CLICK, _this, _this.handleClose);
+        if (f) {
+            _this._father = f;
+        }
         return _this;
+        //this.bt_close.on(Laya.Event.CLICK, this, this.handleClose);
     }
     gameBg.prototype.handleClose = function () {
-        server.logout();
         Laya.stage.addChild(new loginView());
         if (this._father) {
             this._father.destroy();
         }
         this.removeSelf();
         this.destroy();
+        console.log("logout here");
+        server.logout();
     };
     return gameBg;
 }(ui.gamebgUI));

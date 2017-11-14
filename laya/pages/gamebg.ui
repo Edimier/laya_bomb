@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":3,
+    "selecteID":303,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -15,26 +15,119 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":0,"skin":"comp/star.png"},
+            "props":{"y":0,"x":0,"var":"bt_game_bg","skin":"comp/bg2.png","name":"gamebg"},
             "nodeParent":1,
-            "label":"Image",
+            "label":"Image(bt_game_bg)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":3,
+            "compId":5,
+            "child":[
+                ],
+            "$LOCKED":true
+        },
+        {
+            "x":15,
+            "type":"Label",
+            "props":{"y":50,"x":202,"width":67,"var":"m_score1","styleSkin":"comp/label.png","height":25,"borderColor":"#40e20d"},
+            "nodeParent":1,
+            "label":"Label(m_score1)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":147,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Image",
+            "props":{"y":50,"x":146,"width":47,"var":"m_scoreLable1","skin":"comp/score.png","name":"scoreLable1","height":39},
+            "nodeParent":1,
+            "label":"Image(m_scoreLable1)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":148,
+            "child":[
+                ],
+            "$LOCKED":true
+        },
+        {
+            "x":15,
+            "type":"Label",
+            "props":{"y":50,"x":370,"width":67,"var":"m_score2","styleSkin":"comp/label.png","height":25,"borderColor":"#40e20d"},
+            "nodeParent":1,
+            "label":"Label(m_score2)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":149,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Image",
+            "props":{"y":50,"x":314,"width":47,"var":"m_scoreLable2","skin":"comp/score.png","name":"scoreLable2","height":39},
+            "nodeParent":1,
+            "label":"Image(m_scoreLable2)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":150,
             "child":[
                 ]
         },
         {
             "x":15,
             "type":"Button",
-            "props":{"y":10,"x":558,"width":30,"var":"bt_close","skin":"comp/btn_close.png","height":30},
+            "props":{"y":208,"x":80,"width":30,"var":"bt_up","skin":"comp/button.png","label":"up","height":30},
             "nodeParent":1,
-            "label":"Button(bt_close)",
+            "label":"Button(bt_up)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":4,
+            "compId":302,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":263,"x":80,"width":30,"var":"bt_down","skin":"comp/button.png","label":"down","height":30},
+            "nodeParent":1,
+            "label":"Button(bt_down)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":303,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":237,"x":111,"width":30,"var":"bt_right","skin":"comp/button.png","label":"right","height":30},
+            "nodeParent":1,
+            "label":"Button(bt_right)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":304,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":237,"x":49,"width":30,"var":"bt_left","skin":"comp/button.png","label":"lefit","height":30},
+            "nodeParent":1,
+            "label":"Button(bt_left)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":305,
             "child":[
                 ]
         }],

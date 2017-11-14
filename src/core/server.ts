@@ -5,18 +5,17 @@ class Server extends Laya.EventDispatcher{
     private _protoBuilderGameMap;
     private _uid : number;
     private _connectReady:boolean = false;
+    private _heartTimer : Laya.Timer;
 
     constructor(){
         super();
+        this._heartTimer = new Laya.Timer();
         this._socket = new Laya.Socket();
         this._socket.endian = Laya.Socket.BIG_ENDIAN;
-
-
         this._socket.on(Laya.Event.OPEN, this, this.onSocketOpen);
         this._socket.on(Laya.Event.CLOSE, this, this.onSocketClose);
         this._socket.on(Laya.Event.MESSAGE, this, this.onMessageReveived);
         this._socket.on(Laya.Event.ERROR, this, this.onConnectError);
-
         //加载协议映射表
         this._protoIDs = ProtoIDs.getMap();
         //加载协议处理
@@ -25,24 +24,14 @@ class Server extends Laya.EventDispatcher{
         this._protoBuilderGameMap = protoBuf.load("res/proto/game.proto");
     }
 
-    // 测试
-    public test(){
-        
-    }
-
     public logout(){
         this._socket.close();
     }
 
     public connect(uid:number){
         this._uid = uid;
-        //this.connect("ws://45.76.110.156:7001/ws");
         let addr = "ws://172.16.154.6:7001/ws";
         this._socket.connectByUrl(addr);
-        
-    }
-
-    public login(uid:number){
     }
 
     public onSocketOpen(){
@@ -64,12 +53,12 @@ class Server extends Laya.EventDispatcher{
         } else {
             console.log("Not have uid!");
         }
-        // this.sendData("user.UserInfoRequest", {uid:uid});
     }
 
     public onSocketClose(){
         console.log("socket close");
         this.event("CONNECT_CLOSE");
+        this._heartTimer.clearAll(this);
         this._connectReady = false;
     }
 
@@ -86,6 +75,7 @@ class Server extends Laya.EventDispatcher{
 		switch (nameId) {
 			case 0:
                 console.log("登录成功");
+                this._heartTimer.loop(100, this, this.onHeartBeat);
                 this.event("LOGIN_SUCCESS", this._uid);
 				break;
 			case 1:
@@ -115,7 +105,7 @@ class Server extends Laya.EventDispatcher{
                 protoBuilderMap.then( (root)=>{
                     let AwesomeMessage = root.lookup(name);
                     if(AwesomeMessage){
-                        //console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                        console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
                         let decodeData = AwesomeMessage.decode( bytes.getUint8Array(4, bytes.length - 4));
                         this.event(name, decodeData);
                     } else {
@@ -129,6 +119,18 @@ class Server extends Laya.EventDispatcher{
         console.log("connect error");
         this.event("CONNECT_ERROR");
         this._connectReady = false;
+    }
+
+    private onHeartBeat(){
+        if(this._connectReady){
+            let ba: Laya.Byte = new Laya.Byte();
+            ba.writeInt16(2);
+            ba.writeInt16(2);
+            this._socket.send(ba.buffer);
+            this._socket.flush();
+        } else {
+            console.log("In heartBeat, the connection id closed!")
+        }
     }
 
     public sendData(name: string, data: any, cb: Function = null): void {

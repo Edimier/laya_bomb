@@ -5,7 +5,7 @@ message UserInfoRequest {
 }
 
 message UserInfoResonpse {
-        optional int32 uid = 1;
+        required int32 uid = 1;
         optional string nickname = 2;
 }
 

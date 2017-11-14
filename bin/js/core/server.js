@@ -13,6 +13,7 @@ var Server = /** @class */ (function (_super) {
     function Server() {
         var _this = _super.call(this) || this;
         _this._connectReady = false;
+        _this._heartTimer = new Laya.Timer();
         _this._socket = new Laya.Socket();
         _this._socket.endian = Laya.Socket.BIG_ENDIAN;
         _this._socket.on(Laya.Event.OPEN, _this, _this.onSocketOpen);
@@ -27,19 +28,13 @@ var Server = /** @class */ (function (_super) {
         _this._protoBuilderGameMap = protoBuf.load("res/proto/game.proto");
         return _this;
     }
-    // 测试
-    Server.prototype.test = function () {
-    };
     Server.prototype.logout = function () {
         this._socket.close();
     };
     Server.prototype.connect = function (uid) {
         this._uid = uid;
-        //this.connect("ws://45.76.110.156:7001/ws");
         var addr = "ws://172.16.154.6:7001/ws";
         this._socket.connectByUrl(addr);
-    };
-    Server.prototype.login = function (uid) {
     };
     Server.prototype.onSocketOpen = function () {
         if (this._uid) {
@@ -59,11 +54,11 @@ var Server = /** @class */ (function (_super) {
         else {
             console.log("Not have uid!");
         }
-        // this.sendData("user.UserInfoRequest", {uid:uid});
     };
     Server.prototype.onSocketClose = function () {
         console.log("socket close");
         this.event("CONNECT_CLOSE");
+        this._heartTimer.clearAll(this);
         this._connectReady = false;
     };
     Server.prototype.onMessageReveived = function (data) {
@@ -77,6 +72,7 @@ var Server = /** @class */ (function (_super) {
         switch (nameId) {
             case 0:
                 console.log("登录成功");
+                this._heartTimer.loop(100, this, this.onHeartBeat);
                 this.event("LOGIN_SUCCESS", this._uid);
                 break;
             case 1:
@@ -105,7 +101,7 @@ var Server = /** @class */ (function (_super) {
                 protoBuilderMap.then(function (root) {
                     var AwesomeMessage = root.lookup(name_1);
                     if (AwesomeMessage) {
-                        //console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                        console.log("Find name : " + name_1 + ", id = " + nameId + ", module:" + module_1 + ",action:" + action_1);
                         var decodeData = AwesomeMessage.decode(bytes.getUint8Array(4, bytes.length - 4));
                         _this.event(name_1, decodeData);
                     }
@@ -119,6 +115,18 @@ var Server = /** @class */ (function (_super) {
         console.log("connect error");
         this.event("CONNECT_ERROR");
         this._connectReady = false;
+    };
+    Server.prototype.onHeartBeat = function () {
+        if (this._connectReady) {
+            var ba = new Laya.Byte();
+            ba.writeInt16(2);
+            ba.writeInt16(2);
+            this._socket.send(ba.buffer);
+            this._socket.flush();
+        }
+        else {
+            console.log("In heartBeat, the connection id closed!");
+        }
     };
     Server.prototype.sendData = function (name, data, cb) {
         var _this = this;
