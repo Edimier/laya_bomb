@@ -1,1 +1,1 @@
-{"version":3,"file":"player.js","sourceRoot":"","sources":["../../../src/game/player.ts"],"names":[],"mappings":";;;;;;;;;;AACA;IAAqB,0BAAW;IAG5B;QAAA,YACI,iBAAO,SAEV;QADG,KAAI,CAAC,OAAO,GAAG,EAAE,CAAC;;IACtB,CAAC;IACL,aAAC;AAAD,CAAC,AAPD,CAAqB,IAAI,CAAC,MAAM,GAO/B"}
+{"version":3,"file":"player.js","sourceRoot":"","sources":["../../../src/game/player.ts"],"names":[],"mappings":";;;;;;;;;;AACA;IAAqB,0BAAW;IAM5B;QAAA,YACI,iBAAO,SAGV;QAFG,KAAI,CAAC,OAAO,GAAG,EAAE,CAAC;QAClB,KAAI,CAAC,IAAI,GAAG,KAAK,CAAC;;IACtB,CAAC;IACL,aAAC;AAAD,CAAC,AAXD,CAAqB,IAAI,CAAC,MAAM,GAW/B"}

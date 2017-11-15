@@ -16,9 +16,14 @@ message QuitGameRep {
 // pos={uid,index,uid,index}
 // type此位置墙的类型，1 石墙 2 砖墙 3 空地
 message MapNtf{
+	message Info {
+		required int32 uid = 1;
+		required int32 index = 2;
+    	required string nickname = 3;
+    }
 	required int32 session = 1;
-	repeated int32 pos = 2;
 	repeated int32 wall = 3;
+	repeated Info  pos = 4;
 }
 
 // 通知给服务端自己最新的位置信息pos=index

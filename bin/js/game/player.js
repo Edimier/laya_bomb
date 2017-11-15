@@ -13,6 +13,7 @@ var player = /** @class */ (function (_super) {
     function player() {
         var _this = _super.call(this) || this;
         _this._blocks = {};
+        _this._die = false;
         return _this;
     }
     return player;

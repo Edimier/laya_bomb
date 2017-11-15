@@ -36,7 +36,7 @@ var ui;
             _super.prototype.createChildren.call(this);
             this.createView(ui.loginUI.uiView);
         };
-        loginUI.uiView = { "type": "View", "props": { "width": 600, "height": 400 }, "child": [{ "type": "Image", "props": { "y": 0, "x": 0, "width": 600, "skin": "comp/bg.png", "sizeGrid": "30,5,5,5", "height": 400 } }, { "type": "Label", "props": { "y": 170, "x": 125, "width": 160, "text": "请输入uid:", "height": 30, "fontSize": 30, "font": "楷体", "color": "#0b0707", "bold": true } }, { "type": "TextInput", "props": { "y": 172, "x": 288, "width": 200, "var": "bt_input", "skin": "comp/textinput.png", "sizeGrid": "4,4,4,4", "restrict": "0123456789", "prompt": "请输入1~100之间的整数", "height": 30 } }, { "type": "Button", "props": { "y": 267, "x": 223.5, "width": 153, "var": "bt_login", "skin": "comp/button.png", "sizeGrid": "4,4,4,4", "label": "LOGIN", "height": 69 } }] };
+        loginUI.uiView = { "type": "View", "props": { "width": 600, "height": 400 }, "child": [{ "type": "Image", "props": { "y": 0, "x": 0, "width": 600, "skin": "comp/loginBg.png", "height": 400 } }, { "type": "Label", "props": { "y": 327, "x": 389, "width": 190, "var": "bt_login", "text": "游客登陆", "height": 45, "fontSize": 40, "align": "center" } }, { "type": "Image", "props": { "y": 11, "x": 5, "skin": "comp/bomb_word.png" } }] };
         return loginUI;
     }(View));
     ui.loginUI = loginUI;

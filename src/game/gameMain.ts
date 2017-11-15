@@ -6,18 +6,20 @@ class gameMain{
     private _bg:gameBg;
 
     private _map;
-    private _height;
-    private _width;
-    private _startx;
-    private _starty;
+    private _height : number;
+    private _width : number;
+    private _startx : number;
+    private _starty : number;
     private _stricks;
-    private _numchildIndex;
+    
+    private _nickname : string;
+    private _die : boolean;
 
     constructor(){
         this._startx = 90;
         this._starty = 80;
-
         this._stricks = {};
+        this._die = false;
 
         this._players = new Array<player>();
         server.on("user.JoinRep", this, this.handleJoinRep);
@@ -39,12 +41,12 @@ class gameMain{
 
     private handleLeaveTable(msg:any){
         if(msg){
-            console.log(1)
+            
             for(let i = 0; i < this._players.length; ++i){
-                console.log(2)
+                
                 let p = this._players[i];
                 if(p && p._uid == msg.uid){
-                    console.log(3)
+                    
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
@@ -55,6 +57,8 @@ class gameMain{
 
     private handleGameEndNtf(msg:any){
         console.log("游戏结束！");
+        Laya.stage.addChild(new promptView("Game Over!"));
+        //this.closeBack();
     }
 
     private destroyBlock(blocks, index){
@@ -64,6 +68,20 @@ class gameMain{
             blocks[index] = undefined;
             this._map[index] = 3;
         }
+    }
+
+    private changeToGray(p:player){
+        let colorMatrix:any = 
+        [
+            0.3086, 0.6094, 0.0820, 0, 0,  //R
+            0.3086, 0.6094, 0.0820, 0, 0, //G
+            0.3086, 0.6094, 0.0820, 0, 0,  //B
+            0, 0, 0, 1, 0, //A
+        ];
+        //创建灰色颜色滤镜
+        var GrayFilter:Laya.ColorFilter = new Laya.ColorFilter(colorMatrix);
+        //添加灰色颜色滤镜效果
+        p.filters = [GrayFilter];
     }
 
     private handleOperateNtf(msg:any){
@@ -115,6 +133,21 @@ class gameMain{
                         }
                     }
                 }
+            } else if (msg.result == 4){
+                for( let uid of msg.opt){
+                    if ( uid == this._uid){
+                        this._die = true;
+                        this.changeToGray(this._self);
+                    } else {
+                        for(let p of this._players){
+                            if(p._uid == uid){
+                                p._die = true;
+                                this.changeToGray(p);
+                            }
+                        }
+
+                    }
+                }
             }
         }
     }
@@ -129,14 +162,19 @@ class gameMain{
         return [basex + x * width, basey + y * height];
     }
 
-    private createOtherPlayer(uid, index){
+    private createOtherPlayer(uid, index, nickname){
         let other = new player();
         other._uid = uid;
+        other._nickname = nickname;
         other.loadImage("comp/front.png");
         this._bg.addChild(other);
 
         let text:Laya.Text = new Laya.Text();
-        text.text = other._uid.toString();
+        //text.text = other._uid.toString();
+
+        text.text = nickname;
+        this._bg.m_lable2.text = nickname;
+
         text.pos(0, -other.height/2);
         text.align = "center";
         text.fontSize = 20;
@@ -157,7 +195,6 @@ class gameMain{
     private send_pos(pos_index?:number){
         if(server){
             pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + 20);
-            console.log(pos_index);
             server.sendData("game.SelfMessageNtf", {session:this._session, pos:pos_index});
         }
     }
@@ -198,6 +235,9 @@ class gameMain{
     }
 
     private handleMove(opt){
+        if( this._die ){
+            return;
+        }
          switch (opt){
             case Define.DOWN:
                 this.moveDown();
@@ -217,6 +257,9 @@ class gameMain{
     }
 
     private handleBomb(){
+        if( this._die ){
+            return;
+        }
         let index = this.calc_pos_index(this._self.x, this._self.y + 20);
         server.sendData("game.OperateReq", {session:this._session, optn:2, opt:[this._uid, index + 1, 1]});
     }
@@ -286,7 +329,6 @@ class gameMain{
                 let width = sp.width;
                 this._height = sp.height;
                 this._width = sp.width;
-                this._numchildIndex = bg.numChildren;
 
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
@@ -299,9 +341,10 @@ class gameMain{
             }
         }
 
-        for(let i = 0; i < msg.pos.length; i = i + 2){
-            let uid = msg.pos[i];
-            let index = msg.pos[i+1];
+        for(let p of msg.pos){
+            let uid = p.uid;
+            let index = p.index
+            let nickname = p.nickname;
 
             if(uid == this._uid){
                 let self = this._self;
@@ -311,14 +354,16 @@ class gameMain{
                 self.pos(pos[0], pos[1] - 10);
 
                 let text:Laya.Text = new Laya.Text();
-                text.text = this._uid.toString();
+                text.text = nickname;
+                bg.m_lable1.text = nickname;
+
                 text.pos(0, -self.height/2);
                 text.align = "center";
                 text.fontSize = 20;
                 text.bold = true;
                 this._self.addChild(text);
             } else {
-                this.createOtherPlayer(uid, index);
+                this.createOtherPlayer(uid, index, nickname);
             }
         }
     }
@@ -345,7 +390,7 @@ class gameMain{
             for(let p of this._players){
                 if(p._uid == uid){
                     let pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                    console.log("here  ", index, pos[0], pos[1] - 10)
+                    
                     p.pos(pos[0], pos[1] - 10);
                 }
             }
@@ -378,8 +423,9 @@ class gameMain{
         }
     }
 
-    public mainProcess(uid:number){
-        this._uid = uid;
+    public mainProcess(msg:any){
+        this._uid = msg.uid;
+        this._nickname = msg.nickname
         server.sendData("user.JoinReq", {uid:this._uid, roomid:1000});
     }
 }

@@ -1,16 +1,27 @@
 class loginView extends ui.loginUI{
+
+    private _http:httpserver;
+
+    private _success:boolean;
+
     constructor(){
         super();
+        this._success = false;
+        this._http = new httpserver();
+
         this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
         this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);
         server.on("LOGIN_SUCCESS", this, this.loginSuccess);
-        server.on("LOGIN_FAILED", this, this.loginFailed);
-        //server.on("CONNECT_CLOSE", this, this.connectClose);
+        //server.on("LOGIN_FAILED", this, this.loginFailed);
         server.on("CONNECT_ERROR", this, this.connectClose);
+        
+        this._http.on("HTTPCOMPLETE", this, this.httpLoginSuccess)
+        this._http.on("HTTPERROR", this, this.httpLoginFailed)
     }
 
     private handleLogin(){
-        server.connect();
+        this.bt_login.disabled = true;
+        this._http.connect("http://47.96.161.239", "tmp=1");
         this.bt_login.disabled = true;
     }
 
@@ -19,10 +30,32 @@ class loginView extends ui.loginUI{
         this.destroy();
     }
 
-    private loginSuccess(uid:any){
+    private loginSuccess(msg:any){
+        this.bt_login.disabled = true;
+
+        if (this._success){
+            return;
+        }
+        this._success = true;
+        
         let game_main = new gameMain();
-        game_main.mainProcess(uid);
+        game_main.mainProcess(msg);
         this.destroySelf();
+    }
+
+    private httpLoginSuccess(data:any){
+        let msg = JSON.parse(data);
+        if (msg.uid){
+            this.bt_login.disabled = true;
+            server.connect(Number(msg.uid), msg.nickname);
+        } else {
+            console.log("http get uid error!")
+        }
+    }
+
+    private httpLoginFailed(){
+        Laya.stage.addChild(new  promptView("登陆失败！"));
+        this.bt_login.disabled = false;
     }
 
     private loginFailed(){

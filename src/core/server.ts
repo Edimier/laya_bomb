@@ -6,6 +6,7 @@ class Server extends Laya.EventDispatcher{
     private _uid : number;
     private _connectReady:boolean = false;
     private _heartTimer : Laya.Timer;
+    private _nickname : string;
 
     constructor(){
         super();
@@ -29,9 +30,9 @@ class Server extends Laya.EventDispatcher{
         this._socket.close();
     }
 
-    public connect(uid?:number){
-        uid = uid ? uid : 0;
+    public connect(uid:number, nickname:string){
         this._uid = uid;
+        this._nickname = nickname;
         let addr = "ws://47.96.161.239:7001/ws";
         this._socket.connectByUrl(addr);
     }
@@ -73,21 +74,19 @@ class Server extends Laya.EventDispatcher{
 
 		let len: number = bytes.getUint16();
 		let nameId:number = bytes.getUint16();
-        let uid:number = bytes.getUint16();
 		
 		switch (nameId) {
 			case 0:
                 console.log("登录成功");
-                this._heartTimer.loop(100, this, this.onHeartBeat);
-                this._uid = uid;
-                this.event("LOGIN_SUCCESS", this._uid);
+                this._heartTimer.loop(10000, this, this.onHeartBeat);
+                this.event("LOGIN_SUCCESS", {uid:this._uid, nickname:this._nickname});
 				break;
 			case 1:
                 console.log("登录失败");
                 this.event("LOGIN_FAILED");
 				break;
 			case 2:
-				console.log("收到心跳");
+				//console.log("收到心跳");
 				break;
 			default:
 				let name: string = this._protoIDs[nameId];
@@ -129,11 +128,13 @@ class Server extends Laya.EventDispatcher{
 
     private onHeartBeat(){
         if(this._connectReady){
-            // let ba: Laya.Byte = new Laya.Byte();
-            // ba.writeInt16(2);
-            // ba.writeInt16(2);
-            // this._socket.send(ba.buffer);
-            // this._socket.flush();
+            let ba: Laya.Byte = new Laya.Byte();
+            ba.endian = Laya.Byte.BIG_ENDIAN;
+            ba.writeUint16(2);
+            ba.writeUint16(2);
+            this._socket.send(ba.buffer);
+            this._socket.flush();
+
         } else {
             console.log("In heartBeat, the connection id closed!")
         }

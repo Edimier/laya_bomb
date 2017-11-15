@@ -3,6 +3,7 @@ var gameMain = /** @class */ (function () {
         this._startx = 90;
         this._starty = 80;
         this._stricks = {};
+        this._die = false;
         this._players = new Array();
         server.on("user.JoinRep", this, this.handleJoinRep);
         server.on("game.GameMessageNtf", this, this.handleGameMessageNtf);
@@ -21,12 +22,9 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.handleLeaveTable = function (msg) {
         if (msg) {
-            console.log(1);
             for (var i = 0; i < this._players.length; ++i) {
-                console.log(2);
                 var p = this._players[i];
                 if (p && p._uid == msg.uid) {
-                    console.log(3);
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
@@ -36,6 +34,8 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.handleGameEndNtf = function (msg) {
         console.log("游戏结束！");
+        Laya.stage.addChild(new promptView("Game Over!"));
+        //this.closeBack();
     };
     gameMain.prototype.destroyBlock = function (blocks, index) {
         if (blocks && blocks[index]) {
@@ -44,6 +44,18 @@ var gameMain = /** @class */ (function () {
             blocks[index] = undefined;
             this._map[index] = 3;
         }
+    };
+    gameMain.prototype.changeToGray = function (p) {
+        var colorMatrix = [
+            0.3086, 0.6094, 0.0820, 0, 0,
+            0.3086, 0.6094, 0.0820, 0, 0,
+            0.3086, 0.6094, 0.0820, 0, 0,
+            0, 0, 0, 1, 0,
+        ];
+        //创建灰色颜色滤镜
+        var GrayFilter = new Laya.ColorFilter(colorMatrix);
+        //添加灰色颜色滤镜效果
+        p.filters = [GrayFilter];
     };
     gameMain.prototype.handleOperateNtf = function (msg) {
         if (msg) {
@@ -97,6 +109,24 @@ var gameMain = /** @class */ (function () {
                     }
                 }
             }
+            else if (msg.result == 4) {
+                for (var _d = 0, _e = msg.opt; _d < _e.length; _d++) {
+                    var uid = _e[_d];
+                    if (uid == this._uid) {
+                        this._die = true;
+                        this.changeToGray(this._self);
+                    }
+                    else {
+                        for (var _f = 0, _g = this._players; _f < _g.length; _f++) {
+                            var p = _g[_f];
+                            if (p._uid == uid) {
+                                p._die = true;
+                                this.changeToGray(p);
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
     gameMain.prototype.calc_pos_xy = function (i, width, height, basex, basey) {
@@ -108,13 +138,16 @@ var gameMain = /** @class */ (function () {
         height = height ? height : this._height;
         return [basex + x * width, basey + y * height];
     };
-    gameMain.prototype.createOtherPlayer = function (uid, index) {
+    gameMain.prototype.createOtherPlayer = function (uid, index, nickname) {
         var other = new player();
         other._uid = uid;
+        other._nickname = nickname;
         other.loadImage("comp/front.png");
         this._bg.addChild(other);
         var text = new Laya.Text();
-        text.text = other._uid.toString();
+        //text.text = other._uid.toString();
+        text.text = nickname;
+        this._bg.m_lable2.text = nickname;
         text.pos(0, -other.height / 2);
         text.align = "center";
         text.fontSize = 20;
@@ -132,7 +165,6 @@ var gameMain = /** @class */ (function () {
     gameMain.prototype.send_pos = function (pos_index) {
         if (server) {
             pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + 20);
-            console.log(pos_index);
             server.sendData("game.SelfMessageNtf", { session: this._session, pos: pos_index });
         }
     };
@@ -168,6 +200,9 @@ var gameMain = /** @class */ (function () {
         }
     };
     gameMain.prototype.handleMove = function (opt) {
+        if (this._die) {
+            return;
+        }
         switch (opt) {
             case Define.DOWN:
                 this.moveDown();
@@ -186,6 +221,9 @@ var gameMain = /** @class */ (function () {
         }
     };
     gameMain.prototype.handleBomb = function () {
+        if (this._die) {
+            return;
+        }
         var index = this.calc_pos_index(this._self.x, this._self.y + 20);
         server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
     };
@@ -245,7 +283,6 @@ var gameMain = /** @class */ (function () {
                 var width = sp.width;
                 this._height = sp.height;
                 this._width = sp.width;
-                this._numchildIndex = bg.numChildren;
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
         }
@@ -256,9 +293,11 @@ var gameMain = /** @class */ (function () {
                 bg.setChildIndex(node, bg.numChildren - 1);
             }
         }
-        for (var i = 0; i < msg.pos.length; i = i + 2) {
-            var uid = msg.pos[i];
-            var index = msg.pos[i + 1];
+        for (var _b = 0, _c = msg.pos; _b < _c.length; _b++) {
+            var p = _c[_b];
+            var uid = p.uid;
+            var index = p.index;
+            var nickname = p.nickname;
             if (uid == this._uid) {
                 var self_1 = this._self;
                 self_1.loadImage("comp/front.png");
@@ -266,7 +305,8 @@ var gameMain = /** @class */ (function () {
                 var pos = this.calc_pos_xy(index, this._width, this._height - 10);
                 self_1.pos(pos[0], pos[1] - 10);
                 var text = new Laya.Text();
-                text.text = this._uid.toString();
+                text.text = nickname;
+                bg.m_lable1.text = nickname;
                 text.pos(0, -self_1.height / 2);
                 text.align = "center";
                 text.fontSize = 20;
@@ -274,7 +314,7 @@ var gameMain = /** @class */ (function () {
                 this._self.addChild(text);
             }
             else {
-                this.createOtherPlayer(uid, index);
+                this.createOtherPlayer(uid, index, nickname);
             }
         }
     };
@@ -297,7 +337,6 @@ var gameMain = /** @class */ (function () {
                 var p = _a[_i];
                 if (p._uid == uid) {
                     var pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                    console.log("here  ", index, pos[0], pos[1] - 10);
                     p.pos(pos[0], pos[1] - 10);
                 }
             }
@@ -324,8 +363,9 @@ var gameMain = /** @class */ (function () {
             Laya.stage.addChild(new promptView("加入游戏失败：" + msg.result));
         }
     };
-    gameMain.prototype.mainProcess = function (uid) {
-        this._uid = uid;
+    gameMain.prototype.mainProcess = function (msg) {
+        this._uid = msg.uid;
+        this._nickname = msg.nickname;
         server.sendData("user.JoinReq", { uid: this._uid, roomid: 1000 });
     };
     return gameMain;

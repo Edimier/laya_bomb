@@ -32,8 +32,9 @@ var Server = /** @class */ (function (_super) {
     Server.prototype.logout = function () {
         this._socket.close();
     };
-    Server.prototype.connect = function (uid) {
+    Server.prototype.connect = function (uid, nickname) {
         this._uid = uid;
+        this._nickname = nickname;
         var addr = "ws://47.96.161.239:7001/ws";
         this._socket.connectByUrl(addr);
     };
@@ -73,8 +74,8 @@ var Server = /** @class */ (function (_super) {
         switch (nameId) {
             case 0:
                 console.log("登录成功");
-                this._heartTimer.loop(100, this, this.onHeartBeat);
-                this.event("LOGIN_SUCCESS", this._uid);
+                this._heartTimer.loop(10000, this, this.onHeartBeat);
+                this.event("LOGIN_SUCCESS", { uid: this._uid, nickname: this._nickname });
                 break;
             case 1:
                 console.log("登录失败");
@@ -121,11 +122,12 @@ var Server = /** @class */ (function (_super) {
     };
     Server.prototype.onHeartBeat = function () {
         if (this._connectReady) {
-            // let ba: Laya.Byte = new Laya.Byte();
-            // ba.writeInt16(2);
-            // ba.writeInt16(2);
-            // this._socket.send(ba.buffer);
-            // this._socket.flush();
+            var ba = new Laya.Byte();
+            ba.endian = Laya.Byte.BIG_ENDIAN;
+            ba.writeUint16(2);
+            ba.writeUint16(2);
+            this._socket.send(ba.buffer);
+            this._socket.flush();
         }
         else {
             console.log("In heartBeat, the connection id closed!");
