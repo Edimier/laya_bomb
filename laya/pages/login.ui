@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":8,
+    "selecteID":9,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -15,52 +15,42 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"30,5,5,5","height":400},
+            "props":{"y":0,"x":0,"width":600,"skin":"comp/loginBg.png","height":400},
             "nodeParent":1,
             "label":"Image",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":2,
+            "compId":6,
             "child":[
-                ]
+                ],
+            "$LOCKED":true
         },
         {
             "x":15,
             "type":"Label",
-            "props":{"y":170,"x":125,"width":160,"text":"请输入uid:","styleSkin":"comp/label.png","height":30,"fontSize":30,"font":"楷体","color":"#0b0707","bold":true},
+            "props":{"y":327,"x":389,"width":190,"var":"bt_login","text":"游客登陆","styleSkin":"comp/label.png","height":45,"fontSize":40,"align":"center"},
             "nodeParent":1,
-            "label":"Label",
+            "label":"Label(bt_login)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":3,
+            "compId":7,
             "child":[
-                ]
+                ],
+            "$LOCKED":true,
+            "$HIDDEN":false
         },
         {
             "x":15,
-            "type":"TextInput",
-            "props":{"y":172,"x":288,"width":200,"var":"bt_input","skin":"comp/textinput.png","sizeGrid":"4,4,4,4","restrict":"0123456789","prompt":"请输入1~100之间的整数","height":30},
+            "type":"Image",
+            "props":{"y":11,"x":5,"skin":"comp/bomb_word.png"},
             "nodeParent":1,
-            "label":"TextInput(bt_input)",
+            "label":"Image",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":4,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
-            "type":"Button",
-            "props":{"y":267,"x":223.5,"width":153,"var":"bt_login","skin":"comp/button.png","sizeGrid":"4,4,4,4","label":"LOGIN","height":69},
-            "nodeParent":1,
-            "label":"Button(bt_login)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":5,
+            "compId":9,
             "child":[
                 ]
         }],

@@ -1,0 +1,73 @@
+package game;
+
+message QuitGameReq {
+  	required int32 session = 1;
+  	required int32 roomid = 2;
+	required int32 status = 3;
+}
+
+message QuitGameRep {
+  	required int32 session = 1;
+  	required int32 roomid = 2;
+	required int32 status = 3;
+	optional int32 uid = 4;
+}
+
+// pos={uid,index,uid,index}
+// type此位置墙的类型，1 石墙 2 砖墙 3 空地
+message MapNtf{
+	required int32 session = 1;
+	repeated int32 pos = 2;
+	repeated int32 wall = 3;
+}
+
+// 通知给服务端自己最新的位置信息pos=index
+message SelfMessageNtf {
+	required int32 session = 1;
+	required int32 pos = 2;
+}
+
+// 游戏场景里所有人的位置信息pmsg={uid,index, uid,index}
+// uid x y pos
+message GameMessageNtf {
+	required int32 session = 1;
+	repeated int32 pmsg = 2;
+}
+
+// opt = {1,uid1,uid2,i,2,j,id}
+// optn=1:uid1拆除uid2位于i处的炸弹opt = {uid1,uid2,i}
+// optn=2:在j处放置一个id类型的炸弹 opt = {uid,j,type}
+
+message OperateReq {
+	required int32 session = 1;
+	required int32 optn = 2;
+	repeated int32 opt = 3;
+}
+
+// result = -1: 放置炸弹错误
+// result = 2: uid 在j处放置一个id类型的炸弹 opt = {uid,j,type}
+// result = 3: 炸弹炸了，把ijkm处的墙炸了 opt = {index, i,j,k,m} 
+message OperateNtf {
+	required int32 session = 1;
+	required int32 result = 2;
+	repeated int32 opt = 3;
+	optional int32 uid = 4;
+	optional int32 score = 5; 
+}
+
+// opt={uid,score,uid,score} 分数状态
+message GameEndNtf {
+	required int32 session = 1;
+	repeated int32 result = 2;
+}
+
+message SetSession {
+	required int32 session = 1;
+}
+
+message LeaveTable {
+	required int32 session = 1;
+	required int32 uid = 2;
+	required int32 reason = 3;
+	required int32 roomid = 4;
+}

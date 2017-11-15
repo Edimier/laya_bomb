@@ -1,0 +1,24 @@
+package user;
+
+message UserInfoRequest {
+        required int32 uid = 1;
+}
+
+message UserInfoResonpse {
+        required int32 uid = 1;
+        optional string nickname = 2;
+}
+
+message JoinReq {
+        required int32 uid = 1;
+        required int32 roomid = 2;
+}
+
+message JoinRep {
+        required int32 uid = 1;
+        required int32 result = 2;
+}
+
+message NotifyKickout{
+	required int32 reason = 1;
+}

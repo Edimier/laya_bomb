@@ -29,6 +29,7 @@ var loginView = /** @class */ (function (_super) {
             }
             else {
                 server.connect(uid);
+                this.bt_login.disabled = true;
             }
         }
         else {
@@ -46,9 +47,11 @@ var loginView = /** @class */ (function (_super) {
     };
     loginView.prototype.loginFailed = function () {
         Laya.stage.addChild(new promptView("登陆失败！"));
+        this.bt_login.disabled = false;
     };
     loginView.prototype.connectClose = function () {
         Laya.stage.addChild(new promptView("连接已经断开，请重新登陆！"));
+        this.bt_login.disabled = false;
     };
     return loginView;
 }(ui.loginUI));

@@ -24,6 +24,7 @@ var Server = /** @class */ (function (_super) {
         _this._protoIDs = ProtoIDs.getMap();
         //加载协议处理
         var protoBuf = Laya.Browser.window.protobuf;
+        console.log("server");
         _this._protoBuilderUserMap = protoBuf.load("res/proto/user.proto");
         _this._protoBuilderGameMap = protoBuf.load("res/proto/game.proto");
         return _this;

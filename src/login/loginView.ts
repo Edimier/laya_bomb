@@ -10,17 +10,8 @@ class loginView extends ui.loginUI{
     }
 
     private handleLogin(){
-        let data = this.bt_input.text;
-        if(data){
-            let uid = Number(data);
-            if(uid < 1 || uid > 100){
-                Laya.stage.addChild(new  promptView("输入的 uid 不在1~100之间！！"));
-            } else {
-                server.connect(uid);
-            }
-        } else {
-            Laya.stage.addChild(new  promptView("请输入uid"));
-        }
+        server.connect();
+        this.bt_login.disabled = true;
     }
 
     private destroySelf(){
@@ -36,9 +27,11 @@ class loginView extends ui.loginUI{
 
     private loginFailed(){
         Laya.stage.addChild(new  promptView("登陆失败！"));
+        this.bt_login.disabled = false;
     }
 
     private connectClose(){
         Laya.stage.addChild(new promptView("连接已经断开，请重新登陆！"));
+        this.bt_login.disabled = false;
     }
 }

@@ -5,7 +5,7 @@
    <item name="comp/a4.png" type="Image" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/tab.png" type="Tab" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/textarea.png" type="TextArea" compress="0" pack="2" quality="80" props="" picType="0"/>
-   <item name="comp/textinput.png" type="TextInput" compress="0" pack="2" quality="80" props="" picType="0"/>
+   <item name="comp/textinput.png" type="TextInput" compress="0" pack="1" quality="80" props="" picType="0"/>
    <item name="comp/vscroll.png" type="VScrollBar" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/vslider.png" type="VSlider" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/image.png" type="Image" compress="0" pack="2" quality="80" props="" picType="0"/>

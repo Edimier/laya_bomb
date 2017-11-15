@@ -20,6 +20,7 @@ class Server extends Laya.EventDispatcher{
         this._protoIDs = ProtoIDs.getMap();
         //加载协议处理
         let protoBuf =  Laya.Browser.window.protobuf;
+        console.log("server");
         this._protoBuilderUserMap = protoBuf.load("res/proto/user.proto");
         this._protoBuilderGameMap = protoBuf.load("res/proto/game.proto");
     }
@@ -28,7 +29,8 @@ class Server extends Laya.EventDispatcher{
         this._socket.close();
     }
 
-    public connect(uid:number){
+    public connect(uid?:number){
+        uid = uid ? uid : 0;
         this._uid = uid;
         let addr = "ws://47.96.161.239:7001/ws";
         this._socket.connectByUrl(addr);
@@ -71,11 +73,13 @@ class Server extends Laya.EventDispatcher{
 
 		let len: number = bytes.getUint16();
 		let nameId:number = bytes.getUint16();
+        let uid:number = bytes.getUint16();
 		
 		switch (nameId) {
 			case 0:
                 console.log("登录成功");
                 this._heartTimer.loop(100, this, this.onHeartBeat);
+                this._uid = uid;
                 this.event("LOGIN_SUCCESS", this._uid);
 				break;
 			case 1:

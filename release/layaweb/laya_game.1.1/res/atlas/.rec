@@ -1,0 +1,23 @@
+D .
+D comp
+P D12221A9 bg.png
+R 533EFA35 bg2.png
+P 5E7D1273 bomb.png
+P 13E93110 brick.png
+P B03390E5 btn_close.png
+P 1F3929EA button.png
+P 70037B76 front.png
+R 9EDA959E hscroll$bar.png
+R 1AB768D4 hscroll$down.png
+R 685261D3 hscroll$up.png
+R E466EB1C hslider$bar.png
+P 5EDC128C label.png
+R 9E4DD730 progress$bar.png
+P 2F0FFAD5 score.png
+P 7D24E884 stone.png
+P 6D55334E strick.png
+P BDA71F88 textinput.png
+R 52107B89 vscroll$bar.png
+R E26B933E vscroll$down.png
+R B9680947 vscroll$up.png
+R E466EB1C vslider$bar.png

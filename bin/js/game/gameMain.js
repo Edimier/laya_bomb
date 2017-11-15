@@ -216,6 +216,13 @@ var gameMain = /** @class */ (function () {
         Laya.stage.addChild(this._bg);
         this.initButton();
         var bg = this._bg;
+        bg.m_lable1.text = "我的得分";
+        bg.m_lable2.text = "对手得分";
+        bg.m_lable1.align = "center";
+        bg.m_lable1.fontSize = 18;
+        bg.m_lable1.bold = true;
+        bg.m_lable2.align = "center";
+        bg.m_lable2.fontSize = 13;
         for (var i = 0; i < msg.wall.length; ++i) {
             var type = msg.wall[i];
             var x = i % 15;
@@ -263,6 +270,7 @@ var gameMain = /** @class */ (function () {
                 text.pos(0, -self_1.height / 2);
                 text.align = "center";
                 text.fontSize = 20;
+                text.bold = true;
                 this._self.addChild(text);
             }
             else {
@@ -299,7 +307,7 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.closeBack = function () {
         if (server) {
-            server.sendData("game.QuitGameReq", { session: this._session, uid: this._uid });
+            server.sendData("game.QuitGameReq", { session: this._session, roomid: 1000, status: 0 });
             server.logout();
         }
         for (var _i = 0, _a = this._players; _i < _a.length; _i++) {

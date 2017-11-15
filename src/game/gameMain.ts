@@ -254,6 +254,16 @@ class gameMain{
 
         let bg:gameBg = this._bg;
 
+        bg.m_lable1.text = "我的得分";
+        bg.m_lable2.text = "对手得分";
+
+        bg.m_lable1.align = "center";
+        bg.m_lable1.fontSize = 18;
+        bg.m_lable1.bold = true;
+
+        bg.m_lable2.align = "center";
+        bg.m_lable2.fontSize = 13;
+
         for(let i = 0; i < msg.wall.length; ++i){
             let type = msg.wall[i];
             let x = i % 15;
@@ -305,6 +315,7 @@ class gameMain{
                 text.pos(0, -self.height/2);
                 text.align = "center";
                 text.fontSize = 20;
+                text.bold = true;
                 this._self.addChild(text);
             } else {
                 this.createOtherPlayer(uid, index);
@@ -347,7 +358,7 @@ class gameMain{
 
     public closeBack(){
         if(server){
-            server.sendData("game.QuitGameReq", {session:this._session, uid:this._uid});
+            server.sendData("game.QuitGameReq", {session:this._session, roomid:1000, status:0});
             server.logout();
         }
 
