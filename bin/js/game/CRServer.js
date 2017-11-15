@@ -11,9 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 var CServer = /** @class */ (function (_super) {
     __extends(CServer, _super);
     function CServer() {
-        var _this = _super.call(this) || this;
-        _this._over = false;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     CServer.prototype.sendData = function (name, data, cb) {
         if (cb === void 0) { cb = null; }
