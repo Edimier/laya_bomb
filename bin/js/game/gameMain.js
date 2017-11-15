@@ -115,6 +115,11 @@ var gameMain = /** @class */ (function () {
                     if (uid == this._uid) {
                         this._die = true;
                         this.changeToGray(this._self);
+                        var node = this._self.getChildAt(this._self.numChildren - 1);
+                        if (node) {
+                            node.text = "DIE";
+                            node.color = "#ff0000";
+                        }
                     }
                     else {
                         for (var _f = 0, _g = this._players; _f < _g.length; _f++) {
@@ -122,6 +127,11 @@ var gameMain = /** @class */ (function () {
                             if (p._uid == uid) {
                                 p._die = true;
                                 this.changeToGray(p);
+                                var node = this._self.getChildAt(p.numChildren - 1);
+                                if (node) {
+                                    node.text = "DIE";
+                                    node.color = "#ff0000";
+                                }
                             }
                         }
                     }
@@ -150,7 +160,7 @@ var gameMain = /** @class */ (function () {
         this._bg.m_lable2.text = nickname;
         text.pos(0, -other.height / 2);
         text.align = "center";
-        text.fontSize = 20;
+        text.fontSize = 5;
         other.addChild(text);
         var pos = this.calc_pos_xy(index, this._width, this._height - 10);
         other.pos(pos[0], pos[1] - 10);
@@ -260,7 +270,7 @@ var gameMain = /** @class */ (function () {
         bg.m_lable1.fontSize = 18;
         bg.m_lable1.bold = true;
         bg.m_lable2.align = "center";
-        bg.m_lable2.fontSize = 13;
+        bg.m_lable2.fontSize = 10;
         for (var i = 0; i < msg.wall.length; ++i) {
             var type = msg.wall[i];
             var x = i % 15;
@@ -309,7 +319,7 @@ var gameMain = /** @class */ (function () {
                 bg.m_lable1.text = nickname;
                 text.pos(0, -self_1.height / 2);
                 text.align = "center";
-                text.fontSize = 20;
+                text.fontSize = 10;
                 text.bold = true;
                 this._self.addChild(text);
             }

@@ -138,11 +138,21 @@ class gameMain{
                     if ( uid == this._uid){
                         this._die = true;
                         this.changeToGray(this._self);
+                        let node = this._self.getChildAt(this._self.numChildren - 1) as Laya.Text;
+                        if(node){
+                            node.text = "DIE";
+                            node.color = "#ff0000";
+                        }
                     } else {
                         for(let p of this._players){
                             if(p._uid == uid){
                                 p._die = true;
                                 this.changeToGray(p);
+                                let node = this._self.getChildAt(p.numChildren - 1) as Laya.Text;
+                                if(node){
+                                    node.text = "DIE";
+                                    node.color = "#ff0000";
+                                }
                             }
                         }
 
@@ -177,7 +187,7 @@ class gameMain{
 
         text.pos(0, -other.height/2);
         text.align = "center";
-        text.fontSize = 20;
+        text.fontSize = 5;
         other.addChild(text);
 
         let pos = this.calc_pos_xy(index, this._width, this._height - 10);
@@ -305,7 +315,7 @@ class gameMain{
         bg.m_lable1.bold = true;
 
         bg.m_lable2.align = "center";
-        bg.m_lable2.fontSize = 13;
+        bg.m_lable2.fontSize = 10;
 
         for(let i = 0; i < msg.wall.length; ++i){
             let type = msg.wall[i];
@@ -359,7 +369,7 @@ class gameMain{
 
                 text.pos(0, -self.height/2);
                 text.align = "center";
-                text.fontSize = 20;
+                text.fontSize = 10;
                 text.bold = true;
                 this._self.addChild(text);
             } else {

@@ -21,7 +21,7 @@ class loginView extends ui.loginUI{
 
     private handleLogin(){
         this.bt_login.disabled = true;
-        this._http.connect("http://47.96.161.239", "tmp=1");
+        this._http.connect("http://47.96.161.239:3389", "tmp=1");
         this.bt_login.disabled = true;
     }
 

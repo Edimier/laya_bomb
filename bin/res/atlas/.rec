@@ -1,9 +1,9 @@
 D .
 D comp
 P D12221A9 bg.png
-R 533EFA35 bg2.png
+P 533EFA35 bg2.png
 P 5E7D1273 bomb.png
-R BFAE9E5A bomb_word.png
+P BFAE9E5A bomb_word.png
 P 13E93110 brick.png
 P B03390E5 btn_close.png
 P 1F3929EA button.png
@@ -13,7 +13,7 @@ R 1AB768D4 hscroll$down.png
 R 685261D3 hscroll$up.png
 R E466EB1C hslider$bar.png
 P 5EDC128C label.png
-R 4D93CB2F loginBg.png
+P 4D93CB2F loginBg.png
 R 9E4DD730 progress$bar.png
 P 2F0FFAD5 score.png
 P 7D24E884 stone.png

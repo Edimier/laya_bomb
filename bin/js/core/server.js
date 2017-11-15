@@ -82,7 +82,7 @@ var Server = /** @class */ (function (_super) {
                 this.event("LOGIN_FAILED");
                 break;
             case 2:
-                console.log("收到心跳");
+                //console.log("收到心跳");
                 break;
             default:
                 var name_1 = this._protoIDs[nameId];
