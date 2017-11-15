@@ -33,7 +33,7 @@ var Server = /** @class */ (function (_super) {
     };
     Server.prototype.connect = function (uid) {
         this._uid = uid;
-        var addr = "ws://172.16.154.6:7001/ws";
+        var addr = "ws://47.96.161.239:7001/ws";
         this._socket.connectByUrl(addr);
     };
     Server.prototype.onSocketOpen = function () {
@@ -101,7 +101,9 @@ var Server = /** @class */ (function (_super) {
                 protoBuilderMap.then(function (root) {
                     var AwesomeMessage = root.lookup(name_1);
                     if (AwesomeMessage) {
-                        console.log("Find name : " + name_1 + ", id = " + nameId + ", module:" + module_1 + ",action:" + action_1);
+                        if (Define.DEBUG_NET) {
+                            console.log("Find name : " + name_1 + ", id = " + nameId + ", module:" + module_1 + ",action:" + action_1);
+                        }
                         var decodeData = AwesomeMessage.decode(bytes.getUint8Array(4, bytes.length - 4));
                         _this.event(name_1, decodeData);
                     }
@@ -118,11 +120,11 @@ var Server = /** @class */ (function (_super) {
     };
     Server.prototype.onHeartBeat = function () {
         if (this._connectReady) {
-            var ba = new Laya.Byte();
-            ba.writeInt16(2);
-            ba.writeInt16(2);
-            this._socket.send(ba.buffer);
-            this._socket.flush();
+            // let ba: Laya.Byte = new Laya.Byte();
+            // ba.writeInt16(2);
+            // ba.writeInt16(2);
+            // this._socket.send(ba.buffer);
+            // this._socket.flush();
         }
         else {
             console.log("In heartBeat, the connection id closed!");
@@ -167,9 +169,12 @@ var Server = /** @class */ (function (_super) {
                 pkg.writeArrayBuffer(buffer);
                 _this._socket.send(pkg.buffer);
                 _this._socket.flush();
+                if (Define.DEBUG_NET) {
+                    console.log("send data:", name, ",id:", _this._protoIDs[name]);
+                }
             }
             else {
-                console.log("encode error " + name);
+                console.log("encode error ", name);
             }
         });
     };

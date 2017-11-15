@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":306,
+    "selecteID":305,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -29,7 +29,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":50,"x":202,"width":67,"var":"m_score1","styleSkin":"comp/label.png","height":25,"borderColor":"#40e20d"},
+            "props":{"y":50,"x":202,"width":67,"var":"m_score1","text":"0","styleSkin":"comp/label.png","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"},
             "nodeParent":1,
             "label":"Label(m_score1)",
             "isDirectory":false,
@@ -56,7 +56,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":50,"x":370,"width":67,"var":"m_score2","styleSkin":"comp/label.png","height":25,"borderColor":"#40e20d"},
+            "props":{"y":50,"x":370,"width":67,"var":"m_score2","text":"0","styleSkin":"comp/label.png","height":25,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#40e20d","align":"center"},
             "nodeParent":1,
             "label":"Label(m_score2)",
             "isDirectory":false,
@@ -82,9 +82,9 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":208,"x":80,"width":30,"var":"bt_up","skin":"comp/button.png","label":"up","height":30},
+            "props":{"y":278,"x":56,"width":30,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":30,"alpha":0.5},
             "nodeParent":1,
-            "label":"Button(bt_up)",
+            "label":"Button(m_up)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
@@ -95,9 +95,9 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":263,"x":80,"width":30,"var":"bt_down","skin":"comp/button.png","label":"down","height":30},
+            "props":{"y":333,"x":56,"width":30,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":30,"alpha":0.5},
             "nodeParent":1,
-            "label":"Button(bt_down)",
+            "label":"Button(m_down)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
@@ -108,9 +108,9 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":237,"x":111,"width":30,"var":"bt_right","skin":"comp/button.png","label":"right","height":30},
+            "props":{"y":307,"x":87,"width":30,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":30,"alpha":0.5},
             "nodeParent":1,
-            "label":"Button(bt_right)",
+            "label":"Button(m_right)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
@@ -121,9 +121,9 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":237,"x":49,"width":30,"var":"bt_left","skin":"comp/button.png","label":"lefit","height":30},
+            "props":{"y":307,"x":25,"width":30,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":30,"alpha":0.5},
             "nodeParent":1,
-            "label":"Button(bt_left)",
+            "label":"Button(m_left)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
@@ -134,13 +134,26 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":163,"x":54,"width":39,"var":"bt_bomb","skin":"comp/button.png","label":"bomb","height":30},
+            "props":{"y":29,"x":480,"var":"bt_close","skin":"comp/button.png","label":"back"},
+            "nodeParent":1,
+            "label":"Button(bt_close)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":308,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":307,"x":516,"width":40,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":40,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(bt_bomb)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":306,
+            "compId":309,
             "child":[
                 ]
         }],

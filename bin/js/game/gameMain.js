@@ -1,260 +1,234 @@
-var Define = /** @class */ (function () {
-    function Define() {
-    }
-    Define.UP = 1;
-    Define.DOWN = 2;
-    Define.LEFT = 3;
-    Define.RIGHT = 4;
-    Define.STONE = 1;
-    Define.STRICK = 2;
-    Define.EMPTYPLACE = 3;
-    Define.PLAYER = 4;
-    return Define;
-}());
 var gameMain = /** @class */ (function () {
     function gameMain() {
-        this._stricks = {};
+        this._startx = 90;
+        this._starty = 80;
         this._players = new Array();
         server.on("user.JoinRep", this, this.handleJoinRep);
         server.on("game.GameMessageNtf", this, this.handleGameMessageNtf);
         server.on("game.QuitGameRep", this, this.handleQuitGameRep);
         server.on("game.SetSession", this, this.handleSetSession);
         server.on("game.MapNtf", this, this.handleMapNtf);
-        server.on("game.OperateRep", this, this.handleOperate);
         server.on("game.OperateNtf", this, this.handleOperateNtf);
         server.on("game.GameEndNtf", this, this.handleGameEndNtf);
-        this._can_move_x = new Array();
-        this._can_move_y = new Array();
-        this._can_move_x[0] = 164;
-        this._can_move_y[0] = 83;
-        for (var i = 1; i < 5; ++i) {
-            this._can_move_x[i] = this._can_move_x[i - 1] + 41;
-            this._can_move_y[i] = this._can_move_y[i - 1] + 41;
-        }
-        for (var i = 5; i < 7; ++i) {
-            this._can_move_y[i] = this._can_move_y[i - 1] + 41;
-        }
     }
     gameMain.prototype.handleGameEndNtf = function (msg) {
+        console.log("游戏结束！");
+    };
+    gameMain.prototype.destroyBlock = function (blocks, index) {
+        if (blocks && blocks[index]) {
+            blocks[index].removeSelf();
+            blocks[index].destroy();
+            blocks[index] = undefined;
+            this._map[index] = 3;
+        }
     };
     gameMain.prototype.handleOperateNtf = function (msg) {
+        if (msg) {
+            if (msg.result == 2) {
+                for (var i = 0; i < msg.opt.length; i = i + 3) {
+                    var uid = msg.opt[i];
+                    var index = msg.opt[i + 1];
+                    var bomb = new Laya.Sprite();
+                    bomb.loadImage("comp/bomb.png");
+                    this._bg.addChild(bomb);
+                    var pos = this.calc_pos_xy(index, this._width, this._height - 10);
+                    bomb.pos(pos[0], pos[1] - 10);
+                    this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 2);
+                    if (uid == this._uid) {
+                        this._self._blocks[index] = bomb;
+                    }
+                    else {
+                        for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
+                            var p = _a[_i];
+                            if (p._uid == uid) {
+                                p._blocks[index] = bomb;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (msg.result == 3) {
+                var index = msg.opt[0];
+                if (msg.uid == this._uid) {
+                    this.destroyBlock(this._self._blocks, index);
+                    for (var i = 1; i < msg.opt.length; ++i) {
+                        this.destroyBlock(this._self._blocks, msg.opt[i]);
+                    }
+                    if (msg.score && msg.score > 0) {
+                        this._bg.m_score1.text = msg.score.toString();
+                    }
+                }
+                else {
+                    for (var _b = 0, _c = this._players; _b < _c.length; _b++) {
+                        var p = _c[_b];
+                        if (p._uid == msg.uid) {
+                            this.destroyBlock(p._blocks, index);
+                            for (var i = 1; i < msg.opt.length; ++i) {
+                                this.destroyBlock(p._blocks, msg.opt[i]);
+                            }
+                            if (msg.score && msg.score > 0) {
+                                this._bg.m_score2.text = msg.score.toString();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     };
-    gameMain.prototype.handleOperate = function (msg) {
+    gameMain.prototype.calc_pos_xy = function (i, width, height, basex, basey) {
+        var x = i % 15;
+        var y = Math.floor(i / 15);
+        basex = basex ? basex : this._startx;
+        basey = basey ? basey : this._starty;
+        width = width ? width : this._width;
+        height = height ? height : this._height;
+        return [basex + x * width, basey + y * height];
     };
-    gameMain.prototype.calc_pos_xy = function (index) {
-        var x = index % 15 - 2;
-        var y = Math.floor(index / 15) - 1;
-        return [164 + x * 21, 83 + y * 20.5];
-    };
-    gameMain.prototype.createOtherPlayer = function (uid, x, y, index) {
+    gameMain.prototype.createOtherPlayer = function (uid, index) {
+        var other = new player();
+        other._uid = uid;
+        other.loadImage("comp/front.png");
+        this._bg.addChild(other);
+        var pos = this.calc_pos_xy(index, this._width, this._height - 20);
+        other.pos(pos[0], pos[1]);
+        this._players.push(other);
     };
     gameMain.prototype.calc_pos_index = function (x, y) {
-        var yy = ((y - 83) / 20.5 + 1) * 15;
-        var xx = (x - 164) / 21 + 2 + (Math.floor(yy / 15) - 1) * 15;
-        return Math.round(xx + 15);
+        var yy = Math.floor((y - this._starty) / (this._height - 10)) * 15;
+        var xx = (x - this._startx) / this._width;
+        var ii = Math.floor(Math.floor(yy) + xx);
+        return ii;
     };
-    gameMain.prototype.send_pos = function (x, y, pos_index) {
-        // if(server){
-        //     x = x ? x : this._self.x;
-        //     y = y ? y : this._self.y;
-        //     pos_index = pos_index ? pos_index : this.calc_pos_index(x, y);
-        //     server.sendData("game.SelfMessageNtf",{session : this._session, pos : [x,y,pos_index]});
-        // } else {
-        // }
+    gameMain.prototype.send_pos = function (pos_index) {
+        if (server) {
+            pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + 20);
+            server.sendData("game.SelfMessageNtf", { session: this._session, pos: pos_index });
+        }
     };
     gameMain.prototype.can_move = function (posx, posy, opt) {
-        if (opt == Define.DOWN || opt == Define.UP) {
-            if (opt == Define.DOWN) {
-                if (posy + 1 > this._can_move_y[this._can_move_y.length - 1]) {
-                    console.log(1);
-                    return false;
-                }
-                if (this._stricks[this.calc_pos_index(posx, posy + 1)]) {
-                    console.log(2);
-                    return false;
-                }
-            }
-            else {
-                if (posy - 1 < this._can_move_y[0]) {
-                    console.log(3);
-                    return false;
-                }
-                if (this._stricks[this.calc_pos_index(posx, posy - 1)]) {
-                    console.log(4);
-                    return false;
-                }
-            }
-            for (var i in this._can_move_x) {
-                if (posx > this._can_move_x[i] - 2 && posx < this._can_move_x[i] + 2) {
-                    console.log(5);
-                    return true;
-                }
-            }
+        var index = this.calc_pos_index(posx, posy);
+        if (this._map[index] && this._map[index] == Define.EMPTYPLACE) {
+            return true;
         }
-        else {
-            if (opt == Define.LEFT) {
-                if (posx - 1 < this._can_move_x[0]) {
-                    console.log(6);
-                    return false;
-                }
-                if (this._stricks[this.calc_pos_index(posx - 1, posy)]) {
-                    console.log(7);
-                    return false;
-                }
-            }
-            else {
-                if (posx + 1 > this._can_move_x[this._can_move_x.length - 1]) {
-                    console.log(8);
-                    return false;
-                }
-                if (this._stricks[this.calc_pos_index(posx + 1, posy)]) {
-                    console.log(8);
-                    return false;
-                }
-            }
-            for (var i in this._can_move_y) {
-                if (posy > this._can_move_y[i] - 2 && posy < this._can_move_y[i] + 2) {
-                    console.log(9);
-                    return true;
-                }
-            }
-        }
-        console.log(10);
         return false;
     };
     gameMain.prototype.moveDown = function () {
-        if (this.can_move(this._self.x, this._self.y, Define.DOWN)) {
-            this._self.y += 1;
+        if (this.can_move(this._self.x, this._self.y + 20 + this._height - 10, Define.DOWN)) {
+            this._self.y += this._height - 10;
             this.send_pos();
         }
     };
     gameMain.prototype.moveUp = function () {
-        if (this.can_move(this._self.x, this._self.y, Define.UP)) {
-            this._self.y -= 1;
+        if (this.can_move(this._self.x, this._self.y + 20 - this._height + 10, Define.UP)) {
+            this._self.y -= this._height - 10;
             this.send_pos();
         }
     };
     gameMain.prototype.moveLeft = function () {
-        if (this.can_move(this._self.x, this._self.x, Define.LEFT)) {
-            this._self.x -= 1;
+        if (this.can_move(this._self.x - this._width, this._self.y + 20, Define.LEFT)) {
+            this._self.x -= this._width;
             this.send_pos();
         }
     };
     gameMain.prototype.moveRight = function () {
-        if (this.can_move(this._self.x, this._self.x, Define.RIGHT)) {
-            this._self.x += 1;
+        if (this.can_move(this._self.x + this._width, this._self.y + 20, Define.RIGHT)) {
+            this._self.x += this._width;
             this.send_pos();
         }
     };
     gameMain.prototype.handleMove = function (opt) {
-        var _this = this;
-        var frameStep = 5;
         switch (opt) {
             case Define.DOWN:
-                this._bg.bt_down.on(Laya.Event.MOUSE_UP, this, function () {
-                    Laya.timer.clear(_this, _this.moveDown);
-                });
-                Laya.timer.frameLoop(frameStep, this, this.moveDown);
+                this.moveDown();
                 break;
             case Define.UP:
-                this._bg.bt_up.on(Laya.Event.MOUSE_UP, this, function () {
-                    Laya.timer.clear(_this, _this.moveUp);
-                });
-                Laya.timer.frameLoop(frameStep, this, this.moveUp);
+                this.moveUp();
                 break;
             case Define.LEFT:
-                this._bg.bt_left.on(Laya.Event.MOUSE_UP, this, function () {
-                    Laya.timer.clear(_this, _this.moveLeft);
-                });
-                Laya.timer.frameLoop(frameStep, this, this.moveLeft);
+                this.moveLeft();
                 break;
             case Define.RIGHT:
-                this._bg.bt_right.on(Laya.Event.MOUSE_UP, this, function () {
-                    Laya.timer.clear(_this, _this.moveRight);
-                });
-                Laya.timer.frameLoop(frameStep, this, this.moveRight);
+                this.moveRight();
                 break;
             default:
                 break;
         }
     };
-    gameMain.prototype.initStageBlock = function () {
+    gameMain.prototype.handleBomb = function () {
+        var index = this.calc_pos_index(this._self.x, this._self.y + 20);
+        server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
+    };
+    gameMain.prototype.initButton = function () {
+        var _this = this;
         var bg = this._bg;
-        var start = bg.getChildIndex(bg.getChildByName("stone1"));
-        for (var i = 165; i > 0; --i) {
-            var stoneName = "stone" + i;
-            var stone = bg.getChildByName(stoneName);
-            if (stone) {
-                bg.setChildIndex(stone, start);
-            }
-        }
+        bg.m_down.on(Laya.Event.CLICK, this, this.handleMove, [Define.DOWN]);
+        bg.m_up.on(Laya.Event.CLICK, this, this.handleMove, [Define.UP]);
+        bg.m_left.on(Laya.Event.CLICK, this, this.handleMove, [Define.LEFT]);
+        bg.m_right.on(Laya.Event.CLICK, this, this.handleMove, [Define.RIGHT]);
+        bg.bt_bomb.on(Laya.Event.CLICK, this, this.handleBomb);
+        bg.m_down.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.m_down.alpha = 1; });
+        bg.m_up.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.m_up.alpha = 1; });
+        bg.m_left.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.m_left.alpha = 1; });
+        bg.m_right.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.m_right.alpha = 1; });
+        bg.bt_bomb.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.bt_bomb.alpha = 1; });
+        bg.m_down.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.m_down.alpha = 0.5; });
+        bg.m_up.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.m_up.alpha = 0.5; });
+        bg.m_left.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.m_left.alpha = 0.5; });
+        bg.m_right.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.m_right.alpha = 0.5; });
+        bg.bt_bomb.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.bt_bomb.alpha = 0.5; });
     };
     gameMain.prototype.handleMapNtf = function (msg) {
-        console.log("here");
-        this._bg = new gameBg(this);
-        Laya.stage.addChild(this._bg);
-        this.initStageBlock();
+        this._map = msg.wall;
+        this._bg = new gameBg();
         this._self = new player();
-        var self = this._self;
+        this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
+        Laya.stage.addChild(this._bg);
+        this.initButton();
         var bg = this._bg;
-        self.loadImage("comp/boy_front.png");
-        bg.addChild(self);
-        var height = bg.m_stone1.height;
-        var width = bg.m_stone1.width;
-        var re = self.getBounds();
-        self.scaleX = width / re.width;
-        self.scaleY = height / re.height;
-        bg.m_score1.text = "0";
-        bg.bt_down.on(Laya.Event.MOUSE_DOWN, this, this.handleMove, [Define.DOWN]);
-        bg.bt_up.on(Laya.Event.MOUSE_DOWN, this, this.handleMove, [Define.UP]);
-        bg.bt_left.on(Laya.Event.MOUSE_DOWN, this, this.handleMove, [Define.LEFT]);
-        bg.bt_right.on(Laya.Event.MOUSE_DOWN, this, this.handleMove, [Define.RIGHT]);
-        var startIndex = 0;
         for (var i = 0; i < msg.wall.length; ++i) {
-            var index = i + 1;
             var type = msg.wall[i];
-            var stoneName = "stone" + index;
-            var stone = bg.getChildByName(stoneName);
-            if ((index - 1) % 15 == 0 && stone) {
-                startIndex = bg.getChildIndex(stone);
-            }
+            var x = i % 15;
+            var y = Math.floor(i / 15);
             if (type == Define.STRICK) {
                 var sp = new Laya.Sprite();
-                sp.loadImage("comp/brick.png");
+                sp.loadImage("comp/strick.png");
                 bg.addChild(sp);
-                var height_1 = bg.m_stone1.height;
-                var width_1 = bg.m_stone1.width;
-                sp.height = height_1;
-                sp.width = width_1;
-                var x = bg.m_stone1.x;
-                var y = bg.m_stone1.y;
-                var re_1 = sp.getBounds();
-                sp.scaleX = width_1 / re_1.width;
-                sp.scaleY = height_1 / re_1.height;
-                var xi = 164 + (index % 15 - 2) * 21;
-                var yi = 93 + (Math.floor(index / 15) - 1) * 20.5;
-                sp.pos(xi, yi);
-                this._stricks[index] = true;
-                var last = bg.getChildAt(bg.numChildren - 1);
-                bg.setChildIndex(last, startIndex);
+                var height = sp.height - 10;
+                var width = sp.width;
+                sp.pos(this._startx + x * width, this._starty + y * height);
+                this._self._blocks[i] = sp;
+            }
+            else if (type == Define.STONE) {
+                var sp = new Laya.Sprite();
+                sp.loadImage("comp/stone.png");
+                bg.addChild(sp);
+                var height = sp.height - 10;
+                var width = sp.width;
+                this._height = sp.height;
+                this._width = sp.width;
+                sp.pos(this._startx + x * width, this._starty + y * height);
             }
         }
-        for (var i = 0; i < msg.pos.length; i = i + 4) {
+        for (var _i = 0, _a = ["up", "down", "left", "right", "bomb"]; _i < _a.length; _i++) {
+            var name_1 = _a[_i];
+            var node = bg.getChildByName(name_1);
+            if (node) {
+                bg.setChildIndex(node, bg.numChildren - 1);
+            }
+        }
+        for (var i = 0; i < msg.pos.length; i = i + 2) {
             var uid = msg.pos[i];
-            var x = msg.pos[i + 1];
-            var y = msg.pos[i + 2];
-            var index = msg.pos[i + 3];
+            var index = msg.pos[i + 1];
             if (uid == this._uid) {
-                if (x > 0 && y > 0) {
-                    self.pos(x, y);
-                }
-                else {
-                    var pos = this.calc_pos_xy(index);
-                    self.pos(pos[0], pos[1]);
-                }
+                var self_1 = this._self;
+                self_1.loadImage("comp/front.png");
+                bg.addChild(self_1);
+                var pos = this.calc_pos_xy(index, this._width, this._height - 20);
+                self_1.pos(pos[0], pos[1]);
             }
             else {
-                this.createOtherPlayer(uid, x, y, index);
+                this.createOtherPlayer(uid, index);
             }
         }
     };
@@ -270,15 +244,24 @@ var gameMain = /** @class */ (function () {
         }
     };
     gameMain.prototype.handleGameMessageNtf = function (msg) {
-        if (!this._bg) {
-            this._bg = new gameBg(this);
-            Laya.stage.addChild(this._bg);
+        for (var i = 0; i < msg.pmsg.length; i = i + 2) {
+            var uid = msg.pmsg[i];
+            var index = msg.pmsg[i + 1];
+            for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
+                var p = _a[_i];
+                if (p._uid == uid) {
+                    var pos = this.calc_pos_xy(index, this._width, this._height - 20);
+                    p.pos(pos[0], pos[1]);
+                }
+            }
         }
     };
     gameMain.prototype.handleQuitGameRep = function (msg) {
     };
-    gameMain.prototype.destroy = function () {
+    gameMain.prototype.closeBack = function () {
         server.sendData("game.QuitGameReq", { session: this._session, uid: this._uid });
+        server.logout();
+        server = undefined;
         for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
             var p = _a[_i];
             p.removeSelf();
@@ -286,6 +269,7 @@ var gameMain = /** @class */ (function () {
         }
         this._self.removeSelf();
         this._self.destroy();
+        Laya.stage.addChild(new loginView());
     };
     gameMain.prototype.handleJoinRep = function (msg) {
         if (msg.result != 0) {

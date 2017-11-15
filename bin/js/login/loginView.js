@@ -12,6 +12,9 @@ var loginView = /** @class */ (function (_super) {
     __extends(loginView, _super);
     function loginView() {
         var _this = _super.call(this) || this;
+        if (!server) {
+            server = new CServer();
+        }
         _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
         _this.bt_login.on(Laya.Event.CLICK, _this, _this.handleLogin);
         server.on("LOGIN_SUCCESS", _this, _this.loginSuccess);

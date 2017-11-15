@@ -30,7 +30,7 @@ class Server extends Laya.EventDispatcher{
 
     public connect(uid:number){
         this._uid = uid;
-        let addr = "ws://172.16.154.6:7001/ws";
+        let addr = "ws://47.96.161.239:7001/ws";
         this._socket.connectByUrl(addr);
     }
 
@@ -105,7 +105,9 @@ class Server extends Laya.EventDispatcher{
                 protoBuilderMap.then( (root)=>{
                     let AwesomeMessage = root.lookup(name);
                     if(AwesomeMessage){
-                        console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                        if(Define.DEBUG_NET){
+                            console.log("Find name : " + name + ", id = " + nameId + ", module:" + module + ",action:" + action);
+                        }
                         let decodeData = AwesomeMessage.decode( bytes.getUint8Array(4, bytes.length - 4));
                         this.event(name, decodeData);
                     } else {
@@ -123,11 +125,11 @@ class Server extends Laya.EventDispatcher{
 
     private onHeartBeat(){
         if(this._connectReady){
-            let ba: Laya.Byte = new Laya.Byte();
-            ba.writeInt16(2);
-            ba.writeInt16(2);
-            this._socket.send(ba.buffer);
-            this._socket.flush();
+            // let ba: Laya.Byte = new Laya.Byte();
+            // ba.writeInt16(2);
+            // ba.writeInt16(2);
+            // this._socket.send(ba.buffer);
+            // this._socket.flush();
         } else {
             console.log("In heartBeat, the connection id closed!")
         }
@@ -173,8 +175,11 @@ class Server extends Laya.EventDispatcher{
 
                 this._socket.send(pkg.buffer);
                 this._socket.flush();
+                if(Define.DEBUG_NET){
+                    console.log("send data:",name,",id:",this._protoIDs[name]);
+                }
             } else {
-                console.log("encode error " + name);
+                console.log("encode error ", name);
             }
         })
 	}

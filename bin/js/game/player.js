@@ -11,7 +11,9 @@ var __extends = (this && this.__extends) || (function () {
 var player = /** @class */ (function (_super) {
     __extends(player, _super);
     function player() {
-        return _super.call(this) || this;
+        var _this = _super.call(this) || this;
+        _this._blocks = {};
+        return _this;
     }
     return player;
 }(Laya.Sprite));

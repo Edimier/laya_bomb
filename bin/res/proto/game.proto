@@ -13,7 +13,7 @@ message QuitGameRep {
 	optional int32 uid = 4;
 }
 
-// pos={type,type,type}
+// pos={uid,index,uid,index}
 // type此位置墙的类型，1 石墙 2 砖墙 3 空地
 message MapNtf{
 	required int32 session = 1;
@@ -21,13 +21,13 @@ message MapNtf{
 	repeated int32 wall = 3;
 }
 
-// 通知给服务端自己最新的位置信息pos={x,y,pos}
+// 通知给服务端自己最新的位置信息pos=index
 message SelfMessageNtf {
 	required int32 session = 1;
-	repeated int32 pos = 2;
+	required int32 pos = 2;
 }
 
-// 游戏场景里所有人的位置信息pmsg={uid,x,y,pos, uid,x,y, pos}
+// 游戏场景里所有人的位置信息pmsg={uid,index, uid,index}
 // uid x y pos
 message GameMessageNtf {
 	required int32 session = 1;
@@ -35,35 +35,24 @@ message GameMessageNtf {
 }
 
 // opt = {1,uid1,uid2,i,2,j,id}
-// 1:uid1拆除uid2位于i处的炸弹
-// 2:在j处放置一个id类型的炸弹
+// optn=1:uid1拆除uid2位于i处的炸弹opt = {uid1,uid2,i}
+// optn=2:在j处放置一个id类型的炸弹 opt = {uid,j,type}
+
 message OperateReq {
 	required int32 session = 1;
 	required int32 optn = 2;
 	repeated int32 opt = 3;
-
 }
 
-// result = {1,result1,2,result2}
-// 1:1的请求的结果
-// 2:2类型的请求的结果
-//message OperateRep {
-//	required int32 session = 1;
-//	repeated int32 result = 2; 
-//}
-
-// opt = {
-// uid1,uid2,i,       uid1 拆除uid2 位于i处的炸弹
-// uid,j,id,          uid 在j处放置一个id类型的炸弹
-// uid,j,p1,p2,p3,p4  uid 放置在j位置的炸弹炸掉了，炸掉的墙为p1,p2,p3,p4
-//}
+// result = -1: 放置炸弹错误
+// result = 2: uid 在j处放置一个id类型的炸弹 opt = {uid,j,type}
+// result = 3: 炸弹炸了，把ijkm处的墙炸了 opt = {index, i,j,k,m} 
 message OperateNtf {
 	required int32 session = 1;
 	required int32 result = 2;
 	repeated int32 opt = 3;
 	optional int32 uid = 4;
 	optional int32 score = 5; 
-
 }
 
 // opt={uid,score,uid,score} 分数状态

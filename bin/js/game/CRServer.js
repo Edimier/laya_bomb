@@ -8,11 +8,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var gameBg = /** @class */ (function (_super) {
-    __extends(gameBg, _super);
-    function gameBg() {
-        return _super.call(this) || this;
+var CServer = /** @class */ (function (_super) {
+    __extends(CServer, _super);
+    function CServer() {
+        var _this = _super.call(this) || this;
+        _this._over = false;
+        return _this;
     }
-    return gameBg;
-}(ui.gamebgUI));
-//# sourceMappingURL=gameBg.js.map
+    CServer.prototype.sendData = function (name, data, cb) {
+        if (cb === void 0) { cb = null; }
+        if (!this._over) {
+            _super.prototype.sendData.call(this, name, data, cb);
+        }
+    };
+    return CServer;
+}(Server));
+//# sourceMappingURL=CRServer.js.map

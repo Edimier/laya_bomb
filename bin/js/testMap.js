@@ -88,7 +88,7 @@ var testMap = /** @class */ (function () {
         bomb.loadImage("comp/bomb.png");
         this._bg.addChild(bomb);
         bomb.pos(this._self.x, this._self.y);
-        console.log(this.calc_pos_index(this._self.x, this._self.y + 20));
+        //console.log( this.calc_pos_index(this._self.x, this._self.y + 20));
         this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 2);
         bomb.timerOnce(3000, this, function () {
             bomb.removeSelf();
