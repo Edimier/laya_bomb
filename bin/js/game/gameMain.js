@@ -2,6 +2,7 @@ var gameMain = /** @class */ (function () {
     function gameMain() {
         this._startx = 90;
         this._starty = 80;
+        this._stricks = {};
         this._players = new Array();
         server.on("user.JoinRep", this, this.handleJoinRep);
         server.on("game.GameMessageNtf", this, this.handleGameMessageNtf);
@@ -53,7 +54,7 @@ var gameMain = /** @class */ (function () {
                 if (msg.uid == this._uid) {
                     this.destroyBlock(this._self._blocks, index);
                     for (var i = 1; i < msg.opt.length; ++i) {
-                        this.destroyBlock(this._self._blocks, msg.opt[i]);
+                        this.destroyBlock(this._stricks, msg.opt[i]);
                     }
                     if (msg.score && msg.score > 0) {
                         this._bg.m_score1.text = msg.score.toString();
@@ -65,7 +66,7 @@ var gameMain = /** @class */ (function () {
                         if (p._uid == msg.uid) {
                             this.destroyBlock(p._blocks, index);
                             for (var i = 1; i < msg.opt.length; ++i) {
-                                this.destroyBlock(p._blocks, msg.opt[i]);
+                                this.destroyBlock(this._stricks, msg.opt[i]);
                             }
                             if (msg.score && msg.score > 0) {
                                 this._bg.m_score2.text = msg.score.toString();
@@ -90,8 +91,8 @@ var gameMain = /** @class */ (function () {
         other._uid = uid;
         other.loadImage("comp/front.png");
         this._bg.addChild(other);
-        var pos = this.calc_pos_xy(index, this._width, this._height - 20);
-        other.pos(pos[0], pos[1]);
+        var pos = this.calc_pos_xy(index, this._width, this._height - 10);
+        other.pos(pos[0], pos[1] - 10);
         this._players.push(other);
     };
     gameMain.prototype.calc_pos_index = function (x, y) {
@@ -103,6 +104,7 @@ var gameMain = /** @class */ (function () {
     gameMain.prototype.send_pos = function (pos_index) {
         if (server) {
             pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + 20);
+            console.log(pos_index);
             server.sendData("game.SelfMessageNtf", { session: this._session, pos: pos_index });
         }
     };
@@ -197,7 +199,8 @@ var gameMain = /** @class */ (function () {
                 var height = sp.height - 10;
                 var width = sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
-                this._self._blocks[i] = sp;
+                //this._self._blocks[i] = sp;
+                this._stricks[i] = sp;
             }
             else if (type == Define.STONE) {
                 var sp = new Laya.Sprite();
@@ -224,8 +227,8 @@ var gameMain = /** @class */ (function () {
                 var self_1 = this._self;
                 self_1.loadImage("comp/front.png");
                 bg.addChild(self_1);
-                var pos = this.calc_pos_xy(index, this._width, this._height - 20);
-                self_1.pos(pos[0], pos[1]);
+                var pos = this.calc_pos_xy(index, this._width, this._height - 10);
+                self_1.pos(pos[0], pos[1] - 10);
             }
             else {
                 this.createOtherPlayer(uid, index);
@@ -250,8 +253,9 @@ var gameMain = /** @class */ (function () {
             for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
                 var p = _a[_i];
                 if (p._uid == uid) {
-                    var pos = this.calc_pos_xy(index, this._width, this._height - 20);
-                    p.pos(pos[0], pos[1]);
+                    var pos = this.calc_pos_xy(index, this._width, this._height - 10);
+                    console.log("here  ", index, pos[0], pos[1] - 10);
+                    p.pos(pos[0], pos[1] - 10);
                 }
             }
         }

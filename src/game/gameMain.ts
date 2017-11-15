@@ -11,6 +11,7 @@ class gameMain{
     private _startx;
     private _starty;
     private _stricks;
+    private _numchildIndex;
 
     constructor(){
         this._startx = 90;
@@ -53,7 +54,8 @@ class gameMain{
                     this._bg.addChild(bomb);
                     let pos = this.calc_pos_xy(index, this._width, this._height - 10);
                     bomb.pos(pos[0], pos[1]-10);
-                    this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._bg.numChildren - 2);
+
+                    this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._numchildIndex);
 
                     if (uid == this._uid){
                         this._self._blocks[index] = bomb;
@@ -108,8 +110,8 @@ class gameMain{
         other._uid = uid;
         other.loadImage("comp/front.png");
         this._bg.addChild(other);
-        let pos = this.calc_pos_xy(index, this._width, this._height - 20);
-        other.pos(pos[0], pos[1]);
+        let pos = this.calc_pos_xy(index, this._width, this._height - 10);
+        other.pos(pos[0], pos[1] - 10 );
         this._players.push(other);
     }
 
@@ -123,6 +125,7 @@ class gameMain{
     private send_pos(pos_index?:number){
         if(server){
             pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + 20);
+            console.log(pos_index);
             server.sendData("game.SelfMessageNtf", {session:this._session, pos:pos_index});
         }
     }
@@ -240,6 +243,7 @@ class gameMain{
                 let width = sp.width;
                 this._height = sp.height;
                 this._width = sp.width;
+                this._numchildIndex = bg.numChildren;
 
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
@@ -260,8 +264,8 @@ class gameMain{
                 let self = this._self;
                 self.loadImage("comp/front.png");
                 bg.addChild(self);
-                let pos = this.calc_pos_xy(index, this._width, this._height - 20);
-                self.pos(pos[0], pos[1]);
+                let pos = this.calc_pos_xy(index, this._width, this._height - 10);
+                self.pos(pos[0], pos[1] - 10);
             } else {
                 this.createOtherPlayer(uid, index);
             }
@@ -289,8 +293,9 @@ class gameMain{
 
             for(let p of this._players){
                 if(p._uid == uid){
-                    let pos = this.calc_pos_xy(index, this._width, this._height - 20);
-                    p.pos(pos[0], pos[1]);
+                    let pos = this.calc_pos_xy(index, this._width, this._height - 10);
+                    console.log("here  ", index, pos[0], pos[1] - 10)
+                    p.pos(pos[0], pos[1] - 10);
                 }
             }
         }
