@@ -64,3 +64,10 @@ message GameEndNtf {
 message SetSession {
 	required int32 session = 1;
 }
+
+message LeaveTable {
+	required int32 session = 1;
+	required int32 uid = 2;
+	required int32 reason = 3;
+	required int32 roomid = 4;
+}
