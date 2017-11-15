@@ -19,7 +19,7 @@ var GameMain = /** @class */ (function () {
             { url: "res/proto/game.proto" },
         ];
         Laya.loader.load(uiResArry, Laya.Handler.create(this, function () {
-            server = new CServer();
+            server = new Server();
             Laya.stage.addChild(new loginView());
         }));
     };

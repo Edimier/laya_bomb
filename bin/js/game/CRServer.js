@@ -15,9 +15,7 @@ var CServer = /** @class */ (function (_super) {
     }
     CServer.prototype.sendData = function (name, data, cb) {
         if (cb === void 0) { cb = null; }
-        if (!this._over) {
-            _super.prototype.sendData.call(this, name, data, cb);
-        }
+        _super.prototype.sendData.call(this, name, data, cb);
     };
     return CServer;
 }(Server));

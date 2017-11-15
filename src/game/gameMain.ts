@@ -27,6 +27,20 @@ class gameMain{
         server.on("game.MapNtf", this, this.handleMapNtf);
         server.on("game.OperateNtf", this, this.handleOperateNtf);
         server.on("game.GameEndNtf", this, this.handleGameEndNtf);
+        server.on("game.LeaveTable", this, this.handleLeaveTable);
+    }
+
+    private handleLeaveTable(msg:any){
+        if(msg){
+            for(let i = 0; i < this._players.length; ++i){
+                let p = this._players[i];
+                if(p && p._uid == msg.uid){
+                    p.removeSelf();
+                    p.destroy();
+                    this._players[i] = undefined;
+                }
+            }
+        }
     }
 
     private handleGameEndNtf(msg:any){
@@ -55,7 +69,7 @@ class gameMain{
                     let pos = this.calc_pos_xy(index, this._width, this._height - 10);
                     bomb.pos(pos[0], pos[1]-10);
 
-                    this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._numchildIndex);
+                    this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._bg.numChildren - 4);
 
                     if (uid == this._uid){
                         this._self._blocks[index] = bomb;

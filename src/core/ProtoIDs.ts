@@ -25,6 +25,8 @@ class ProtoIDs{
         protoIDs["game.GameEndNtf"]=1007
         protoIDs[1008]="game.SetSession"
         protoIDs["game.SetSession"]=1008
+        protoIDs[1009]="game.LeaveTable"
+        protoIDs["game.LeaveTable"]=1009
         protoIDs[2000]="user.UserInfoRequest"
         protoIDs["user.UserInfoRequest"]=2000
         protoIDs[2001]="user.UserInfoResonpse"

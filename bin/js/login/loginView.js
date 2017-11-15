@@ -13,7 +13,7 @@ var loginView = /** @class */ (function (_super) {
     function loginView() {
         var _this = _super.call(this) || this;
         if (!server) {
-            server = new CServer();
+            server = new Server();
         }
         _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
         _this.bt_login.on(Laya.Event.CLICK, _this, _this.handleLogin);

@@ -2,7 +2,7 @@ class loginView extends ui.loginUI{
     constructor(){
         super();
         if( ! server){
-            server = new CServer();
+            server = new Server();
         }
         this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
         this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);

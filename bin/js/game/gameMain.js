@@ -11,7 +11,20 @@ var gameMain = /** @class */ (function () {
         server.on("game.MapNtf", this, this.handleMapNtf);
         server.on("game.OperateNtf", this, this.handleOperateNtf);
         server.on("game.GameEndNtf", this, this.handleGameEndNtf);
+        server.on("game.LeaveTable", this, this.handleLeaveTable);
     }
+    gameMain.prototype.handleLeaveTable = function (msg) {
+        if (msg) {
+            for (var i = 0; i < this._players.length; ++i) {
+                var p = this._players[i];
+                if (p && p._uid == msg.uid) {
+                    p.removeSelf();
+                    p.destroy();
+                    this._players[i] = undefined;
+                }
+            }
+        }
+    };
     gameMain.prototype.handleGameEndNtf = function (msg) {
         console.log("游戏结束！");
     };
@@ -34,7 +47,7 @@ var gameMain = /** @class */ (function () {
                     this._bg.addChild(bomb);
                     var pos = this.calc_pos_xy(index, this._width, this._height - 10);
                     bomb.pos(pos[0], pos[1] - 10);
-                    this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 2);
+                    this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 4);
                     if (uid == this._uid) {
                         this._self._blocks[index] = bomb;
                     }
@@ -210,6 +223,7 @@ var gameMain = /** @class */ (function () {
                 var width = sp.width;
                 this._height = sp.height;
                 this._width = sp.width;
+                this._numchildIndex = bg.numChildren;
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
         }
