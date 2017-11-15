@@ -24,6 +24,7 @@ class GameMain{
         Laya.loader.load(uiResArry, Laya.Handler.create(this, ()=>{
             server = new Server();
             Laya.stage.addChild(new loginView());
+
         }));
     }
 }

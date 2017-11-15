@@ -12,12 +12,21 @@ var gameMain = /** @class */ (function () {
         server.on("game.OperateNtf", this, this.handleOperateNtf);
         server.on("game.GameEndNtf", this, this.handleGameEndNtf);
         server.on("game.LeaveTable", this, this.handleLeaveTable);
+        server.on("user.NotifyKickout", this, this.handleNotifyKickout);
     }
+    gameMain.prototype.handleNotifyKickout = function (msg) {
+        if (msg.reason == 1) {
+            Laya.stage.addChild(new promptView("您的账号已经在别处登陆！"));
+        }
+    };
     gameMain.prototype.handleLeaveTable = function (msg) {
         if (msg) {
+            console.log(1);
             for (var i = 0; i < this._players.length; ++i) {
+                console.log(2);
                 var p = this._players[i];
                 if (p && p._uid == msg.uid) {
+                    console.log(3);
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
@@ -104,6 +113,12 @@ var gameMain = /** @class */ (function () {
         other._uid = uid;
         other.loadImage("comp/front.png");
         this._bg.addChild(other);
+        var text = new Laya.Text();
+        text.text = other._uid.toString();
+        text.pos(0, -other.height / 2);
+        text.align = "center";
+        text.fontSize = 20;
+        other.addChild(text);
         var pos = this.calc_pos_xy(index, this._width, this._height - 10);
         other.pos(pos[0], pos[1] - 10);
         this._players.push(other);
@@ -243,6 +258,12 @@ var gameMain = /** @class */ (function () {
                 bg.addChild(self_1);
                 var pos = this.calc_pos_xy(index, this._width, this._height - 10);
                 self_1.pos(pos[0], pos[1] - 10);
+                var text = new Laya.Text();
+                text.text = this._uid.toString();
+                text.pos(0, -self_1.height / 2);
+                text.align = "center";
+                text.fontSize = 20;
+                this._self.addChild(text);
             }
             else {
                 this.createOtherPlayer(uid, index);
@@ -277,9 +298,10 @@ var gameMain = /** @class */ (function () {
     gameMain.prototype.handleQuitGameRep = function (msg) {
     };
     gameMain.prototype.closeBack = function () {
-        server.sendData("game.QuitGameReq", { session: this._session, uid: this._uid });
-        server.logout();
-        server = undefined;
+        if (server) {
+            server.sendData("game.QuitGameReq", { session: this._session, uid: this._uid });
+            server.logout();
+        }
         for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
             var p = _a[_i];
             p.removeSelf();

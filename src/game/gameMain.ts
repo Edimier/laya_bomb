@@ -28,13 +28,23 @@ class gameMain{
         server.on("game.OperateNtf", this, this.handleOperateNtf);
         server.on("game.GameEndNtf", this, this.handleGameEndNtf);
         server.on("game.LeaveTable", this, this.handleLeaveTable);
+        server.on("user.NotifyKickout", this, this.handleNotifyKickout);
+    }
+
+    private handleNotifyKickout(msg:any){
+        if(msg.reason == 1){
+            Laya.stage.addChild(new promptView("您的账号已经在别处登陆！"));
+        }
     }
 
     private handleLeaveTable(msg:any){
         if(msg){
+            console.log(1)
             for(let i = 0; i < this._players.length; ++i){
+                console.log(2)
                 let p = this._players[i];
                 if(p && p._uid == msg.uid){
+                    console.log(3)
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
@@ -124,6 +134,14 @@ class gameMain{
         other._uid = uid;
         other.loadImage("comp/front.png");
         this._bg.addChild(other);
+
+        let text:Laya.Text = new Laya.Text();
+        text.text = other._uid.toString();
+        text.pos(0, -other.height/2);
+        text.align = "center";
+        text.fontSize = 20;
+        other.addChild(text);
+
         let pos = this.calc_pos_xy(index, this._width, this._height - 10);
         other.pos(pos[0], pos[1] - 10 );
         this._players.push(other);
@@ -230,6 +248,7 @@ class gameMain{
         this._self = new player();
 
         this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
+        
         Laya.stage.addChild(this._bg);
         this.initButton();
 
@@ -280,6 +299,13 @@ class gameMain{
                 bg.addChild(self);
                 let pos = this.calc_pos_xy(index, this._width, this._height - 10);
                 self.pos(pos[0], pos[1] - 10);
+
+                let text:Laya.Text = new Laya.Text();
+                text.text = this._uid.toString();
+                text.pos(0, -self.height/2);
+                text.align = "center";
+                text.fontSize = 20;
+                this._self.addChild(text);
             } else {
                 this.createOtherPlayer(uid, index);
             }
@@ -320,9 +346,10 @@ class gameMain{
     }
 
     public closeBack(){
-        server.sendData("game.QuitGameReq", {session:this._session, uid:this._uid});
-        server.logout();
-        server = undefined;
+        if(server){
+            server.sendData("game.QuitGameReq", {session:this._session, uid:this._uid});
+            server.logout();
+        }
 
         for(let p of this._players){
             p.removeSelf();
