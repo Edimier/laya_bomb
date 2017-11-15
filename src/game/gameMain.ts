@@ -10,10 +10,13 @@ class gameMain{
     private _width;
     private _startx;
     private _starty;
+    private _stricks;
 
     constructor(){
         this._startx = 90;
         this._starty = 80;
+
+        this._stricks = {};
 
         this._players = new Array<player>();
         server.on("user.JoinRep", this, this.handleJoinRep);
@@ -68,7 +71,7 @@ class gameMain{
                 if(msg.uid == this._uid){
                     this.destroyBlock(this._self._blocks, index);
                     for(let i = 1; i < msg.opt.length; ++i){
-                        this.destroyBlock(this._self._blocks, msg.opt[i]);
+                        this.destroyBlock(this._stricks, msg.opt[i]);
                     }
                     if(msg.score && msg.score > 0){
                         this._bg.m_score1.text = msg.score.toString();
@@ -78,7 +81,7 @@ class gameMain{
                         if(p._uid == msg.uid){
                             this.destroyBlock(p._blocks, index);
                             for(let i = 1; i < msg.opt.length; ++i){
-                                this.destroyBlock(p._blocks, msg.opt[i]);
+                                this.destroyBlock(this._stricks, msg.opt[i]);
                             }
                             if(msg.score && msg.score > 0){
                                 this._bg.m_score2.text = msg.score.toString();
@@ -227,7 +230,8 @@ class gameMain{
                 let height = sp.height - 10;
                 let width = sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
-                this._self._blocks[i] = sp;
+                //this._self._blocks[i] = sp;
+                this._stricks[i] = sp;
             } else if(type == Define.STONE){
                 let sp = new Laya.Sprite();
                 sp.loadImage("comp/stone.png");
