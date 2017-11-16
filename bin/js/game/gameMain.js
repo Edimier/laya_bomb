@@ -4,6 +4,7 @@ var gameMain = /** @class */ (function () {
         this._starty = 80;
         this._stricks = {};
         this._die = false;
+        this._timer = new Laya.Timer();
         this._players = new Array();
         server.on("user.JoinRep", this, this.handleJoinRep);
         server.on("game.GameMessageNtf", this, this.handleGameMessageNtf);
@@ -35,6 +36,7 @@ var gameMain = /** @class */ (function () {
     gameMain.prototype.handleGameEndNtf = function (msg) {
         this.showGameOver();
         console.log("游戏结束！");
+        this._timer.once(3000, this, this.closeBack);
     };
     gameMain.prototype.destroyBlock = function (blocks, index) {
         if (blocks && blocks[index]) {

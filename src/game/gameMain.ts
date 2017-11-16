@@ -15,11 +15,15 @@ class gameMain{
     private _nickname : string;
     private _die : boolean;
 
+    private _timer : Laya.Timer;
+
     constructor(){
         this._startx = 90;
         this._starty = 80;
         this._stricks = {};
         this._die = false;
+
+        this._timer = new Laya.Timer();
 
         this._players = new Array<player>();
         server.on("user.JoinRep", this, this.handleJoinRep);
@@ -55,6 +59,7 @@ class gameMain{
     private handleGameEndNtf(msg:any){
         this.showGameOver();
         console.log("游戏结束！");
+        this._timer.once(3000, this, this.closeBack);
     }
 
     private destroyBlock(blocks, index){
