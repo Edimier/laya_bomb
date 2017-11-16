@@ -57,8 +57,6 @@ class gameMain{
 
     private handleGameEndNtf(msg:any){
         console.log("游戏结束！");
-        Laya.stage.addChild(new promptView("Game Over!"));
-        //this.closeBack();
     }
 
     private destroyBlock(blocks, index){
@@ -82,6 +80,10 @@ class gameMain{
         var GrayFilter:Laya.ColorFilter = new Laya.ColorFilter(colorMatrix);
         //添加灰色颜色滤镜效果
         p.filters = [GrayFilter];
+    }
+
+    private playBombSound(){
+        Laya.SoundManager.playSound("comp/bombing.mp3", 1);
     }
 
     private handleOperateNtf(msg:any){
@@ -114,6 +116,7 @@ class gameMain{
                 let index = msg.opt[0];
                 if(msg.uid == this._uid){
                     this.destroyBlock(this._self._blocks, index);
+                    this.playBombSound();
                     for(let i = 1; i < msg.opt.length; ++i){
                         this.destroyBlock(this._stricks, msg.opt[i]);
                     }
@@ -124,6 +127,7 @@ class gameMain{
                     for(let p of this._players){
                         if(p._uid == msg.uid){
                             this.destroyBlock(p._blocks, index);
+                            this.playBombSound();
                             for(let i = 1; i < msg.opt.length; ++i){
                                 this.destroyBlock(this._stricks, msg.opt[i]);
                             }
@@ -142,6 +146,9 @@ class gameMain{
                         if(node){
                             node.text = "DIE";
                             node.color = "#ff0000";
+                            let gameOver = new Laya.Sprite();
+                            gameOver.loadImage("comp/game_over.png");
+                            Laya.stage.addChild(gameOver);
                         }
                     } else {
                         for(let p of this._players){
@@ -301,6 +308,15 @@ class gameMain{
         this._self = new player();
 
         this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
+        this._bg.bt_sound.on(Laya.Event.CLICK, this, ()=>{  
+            let switchm:boolean = sound.switchMusic();
+            if(switchm){
+                this._bg.bt_sound.text.text = "stop music";
+            } else {
+                this._bg.bt_sound.text.text = "open music";
+            }
+
+        });
         
         Laya.stage.addChild(this._bg);
         this.initButton();

@@ -1,13 +1,13 @@
 class loginView extends ui.loginUI{
 
-    private _http:httpserver;
+    private _http:HTTPServer;
 
     private _success:boolean;
 
     constructor(){
         super();
         this._success = false;
-        this._http = new httpserver();
+        this._http = new HTTPServer();
 
         this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
         this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);
@@ -21,7 +21,7 @@ class loginView extends ui.loginUI{
 
     private handleLogin(){
         this.bt_login.disabled = true;
-        this._http.connect("http://47.96.161.239:3389", "tmp=1");
+        this._http.connect("http://47.96.161.239", "tmp=1");
         this.bt_login.disabled = true;
     }
 

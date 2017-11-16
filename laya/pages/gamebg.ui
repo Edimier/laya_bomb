@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":315,
+    "selecteID":313,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -107,7 +107,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":29,"x":544,"width":44,"var":"bt_close","skin":"comp/button.png","label":"back","height":23,"alpha":0.5},
+            "props":{"y":28,"x":544,"width":44,"var":"bt_close","skin":"comp/button.png","label":"back","height":23,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(bt_close)",
             "isDirectory":false,
@@ -153,6 +153,19 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":311,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":28,"x":462,"width":72,"var":"bt_sound","skin":"comp/button.png","label":"music set","height":23,"alpha":0.5},
+            "nodeParent":1,
+            "label":"Button(bt_sound)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":313,
             "child":[
                 ]
         }],

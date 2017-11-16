@@ -1,4 +1,4 @@
-class httpserver extends Laya.EventDispatcher{
+class HTTPServer extends Laya.EventDispatcher{
 		private hr: Laya.HttpRequest;
 		public connect(addr:string, msg:string): void {
 			this.hr = new Laya.HttpRequest();

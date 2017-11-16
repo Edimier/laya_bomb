@@ -8,28 +8,28 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var httpserver = /** @class */ (function (_super) {
-    __extends(httpserver, _super);
-    function httpserver() {
+var HTTPServer = /** @class */ (function (_super) {
+    __extends(HTTPServer, _super);
+    function HTTPServer() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    httpserver.prototype.connect = function (addr, msg) {
+    HTTPServer.prototype.connect = function (addr, msg) {
         this.hr = new Laya.HttpRequest();
         this.hr.once(Laya.Event.PROGRESS, this, this.onHttpRequestProgress);
         this.hr.once(Laya.Event.COMPLETE, this, this.onHttpRequestComplete);
         this.hr.once(Laya.Event.ERROR, this, this.onHttpRequestError);
         this.hr.send(addr, msg, 'post', 'text');
     };
-    httpserver.prototype.onHttpRequestError = function (e) {
+    HTTPServer.prototype.onHttpRequestError = function (e) {
         this.event("HTTPERROR");
         console.log(e);
     };
-    httpserver.prototype.onHttpRequestProgress = function (e) {
+    HTTPServer.prototype.onHttpRequestProgress = function (e) {
         //console.log(e)
     };
-    httpserver.prototype.onHttpRequestComplete = function (e) {
+    HTTPServer.prototype.onHttpRequestComplete = function (e) {
         this.event("HTTPCOMPLETE", e);
     };
-    return httpserver;
+    return HTTPServer;
 }(Laya.EventDispatcher));
-//# sourceMappingURL=httpserver.js.map
+//# sourceMappingURL=HTTPServer.js.map

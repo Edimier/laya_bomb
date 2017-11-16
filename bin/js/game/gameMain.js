@@ -34,8 +34,6 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.handleGameEndNtf = function (msg) {
         console.log("游戏结束！");
-        Laya.stage.addChild(new promptView("Game Over!"));
-        //this.closeBack();
     };
     gameMain.prototype.destroyBlock = function (blocks, index) {
         if (blocks && blocks[index]) {
@@ -56,6 +54,9 @@ var gameMain = /** @class */ (function () {
         var GrayFilter = new Laya.ColorFilter(colorMatrix);
         //添加灰色颜色滤镜效果
         p.filters = [GrayFilter];
+    };
+    gameMain.prototype.playBombSound = function () {
+        Laya.SoundManager.playSound("comp/bombing.mp3", 1);
     };
     gameMain.prototype.handleOperateNtf = function (msg) {
         if (msg) {
@@ -87,6 +88,7 @@ var gameMain = /** @class */ (function () {
                 var index = msg.opt[0];
                 if (msg.uid == this._uid) {
                     this.destroyBlock(this._self._blocks, index);
+                    this.playBombSound();
                     for (var i = 1; i < msg.opt.length; ++i) {
                         this.destroyBlock(this._stricks, msg.opt[i]);
                     }
@@ -99,6 +101,7 @@ var gameMain = /** @class */ (function () {
                         var p = _c[_b];
                         if (p._uid == msg.uid) {
                             this.destroyBlock(p._blocks, index);
+                            this.playBombSound();
                             for (var i = 1; i < msg.opt.length; ++i) {
                                 this.destroyBlock(this._stricks, msg.opt[i]);
                             }
@@ -119,6 +122,9 @@ var gameMain = /** @class */ (function () {
                         if (node) {
                             node.text = "DIE";
                             node.color = "#ff0000";
+                            var gameOver = new Laya.Sprite();
+                            gameOver.loadImage("comp/game_over.png");
+                            Laya.stage.addChild(gameOver);
                         }
                     }
                     else {
@@ -257,10 +263,20 @@ var gameMain = /** @class */ (function () {
         bg.bt_bomb.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.bt_bomb.alpha = 0.5; });
     };
     gameMain.prototype.handleMapNtf = function (msg) {
+        var _this = this;
         this._map = msg.wall;
         this._bg = new gameBg();
         this._self = new player();
         this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
+        this._bg.bt_sound.on(Laya.Event.CLICK, this, function () {
+            var switchm = sound.switchMusic();
+            if (switchm) {
+                _this._bg.bt_sound.text.text = "stop music";
+            }
+            else {
+                _this._bg.bt_sound.text.text = "open music";
+            }
+        });
         Laya.stage.addChild(this._bg);
         this.initButton();
         var bg = this._bg;

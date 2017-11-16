@@ -184,4 +184,4 @@ var Server = /** @class */ (function (_super) {
     return Server;
 }(Laya.EventDispatcher));
 var server;
-//# sourceMappingURL=server.js.map
+//# sourceMappingURL=Server.js.map

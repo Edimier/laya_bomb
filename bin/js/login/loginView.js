@@ -13,7 +13,7 @@ var loginView = /** @class */ (function (_super) {
     function loginView() {
         var _this = _super.call(this) || this;
         _this._success = false;
-        _this._http = new httpserver();
+        _this._http = new HTTPServer();
         _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
         _this.bt_login.on(Laya.Event.CLICK, _this, _this.handleLogin);
         server.on("LOGIN_SUCCESS", _this, _this.loginSuccess);
@@ -25,7 +25,7 @@ var loginView = /** @class */ (function (_super) {
     }
     loginView.prototype.handleLogin = function () {
         this.bt_login.disabled = true;
-        this._http.connect("http://47.96.161.239:3389", "tmp=1");
+        this._http.connect("http://47.96.161.239", "tmp=1");
         this.bt_login.disabled = true;
     };
     loginView.prototype.destroySelf = function () {
