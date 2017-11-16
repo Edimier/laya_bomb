@@ -41,12 +41,9 @@ class gameMain{
 
     private handleLeaveTable(msg:any){
         if(msg){
-            
             for(let i = 0; i < this._players.length; ++i){
-                
                 let p = this._players[i];
                 if(p && p._uid == msg.uid){
-                    
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
@@ -56,6 +53,7 @@ class gameMain{
     }
 
     private handleGameEndNtf(msg:any){
+        this.showGameOver();
         console.log("游戏结束！");
     }
 
@@ -84,6 +82,12 @@ class gameMain{
 
     private playBombSound(){
         Laya.SoundManager.playSound("comp/bombing.mp3", 1);
+    }
+
+    private showGameOver(){
+        let gameOver = new Laya.Sprite();
+        gameOver.loadImage("comp/game_over.png");
+        Laya.stage.addChild(gameOver);
     }
 
     private handleOperateNtf(msg:any){
@@ -146,9 +150,7 @@ class gameMain{
                         if(node){
                             node.text = "DIE";
                             node.color = "#ff0000";
-                            let gameOver = new Laya.Sprite();
-                            gameOver.loadImage("comp/game_over.png");
-                            Laya.stage.addChild(gameOver);
+                            this.showGameOver();
                         }
                     } else {
                         for(let p of this._players){

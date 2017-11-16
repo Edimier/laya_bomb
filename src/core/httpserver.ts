@@ -20,5 +20,4 @@ class HTTPServer extends Laya.EventDispatcher{
 		private onHttpRequestComplete(e: any): void {
 			this.event("HTTPCOMPLETE", e)
 		}
-	}
 }

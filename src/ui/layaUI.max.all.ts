@@ -16,15 +16,13 @@ module ui {
 		public m_lable2:Laya.Label;
 		public bt_sound:Laya.Button;
 
-        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"bt_game_bg","skin":"comp/bg2.png","name":"gamebg"}},{"type":"Label","props":{"y":130,"x":15,"width":67,"var":"m_score1","text":"0","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"}},{"type":"Label","props":{"y":130,"x":521,"width":67,"var":"m_score2","text":"0","height":25,"gray":true,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#bed6b6","align":"center"}},{"type":"Button","props":{"y":245,"x":73,"width":40,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":40,"alpha":0.5}},{"type":"Button","props":{"y":322,"x":73,"width":40,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":40,"alpha":0.5}},{"type":"Button","props":{"y":284,"x":112,"width":40,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":40,"alpha":0.5}},{"type":"Button","props":{"y":284,"x":35,"width":40,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":40,"alpha":0.5}},{"type":"Button","props":{"y":28,"x":544,"width":44,"var":"bt_close","skin":"comp/button.png","label":"back","height":23,"alpha":0.5}},{"type":"Button","props":{"y":277,"x":477,"width":50,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":50,"alpha":0.5}},{"type":"Label","props":{"y":67,"x":15,"wordWrap":true,"width":67,"var":"m_lable1","height":50,"gray":false,"font":"娃娃体-简"}},{"type":"Label","props":{"y":67,"x":521,"width":67,"var":"m_lable2","height":50,"gray":true}},{"type":"Button","props":{"y":28,"x":462,"width":72,"var":"bt_sound","skin":"comp/button.png","label":"music set","height":23,"alpha":0.5}}]};
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"bt_game_bg","skin":"comp/bg2.png","name":"gamebg"}},{"type":"Label","props":{"y":130,"x":15,"width":67,"var":"m_score1","text":"0","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"}},{"type":"Label","props":{"y":130,"x":521,"width":67,"var":"m_score2","text":"0","height":25,"gray":true,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#bed6b6","align":"center"}},{"type":"Button","props":{"y":213,"x":41,"width":40,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":40,"alpha":0.5}},{"type":"Button","props":{"y":290,"x":41,"width":40,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":40,"alpha":0.5}},{"type":"Button","props":{"y":252,"x":80,"width":40,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":40,"alpha":0.5}},{"type":"Button","props":{"y":252,"x":3,"width":40,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":40,"alpha":0.5}},{"type":"Button","props":{"y":28,"x":544,"width":44,"var":"bt_close","skin":"comp/button.png","label":"back","height":23,"alpha":0.5}},{"type":"Button","props":{"y":267,"x":513,"width":50,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":50,"alpha":0.5}},{"type":"Label","props":{"y":67,"x":15,"wordWrap":true,"width":67,"var":"m_lable1","height":50,"gray":false,"font":"娃娃体-简"}},{"type":"Label","props":{"y":67,"x":521,"width":67,"var":"m_lable2","height":50,"gray":true}},{"type":"Button","props":{"y":28,"x":462,"width":72,"var":"bt_sound","skin":"comp/button.png","label":"music set","height":23,"alpha":0.5}}]};
         constructor(){ super()}
         createChildren():void {
         
             super.createChildren();
             this.createView(ui.gamebgUI.uiView);
-
         }
-
     }
 }
 
@@ -38,9 +36,7 @@ module ui {
         
             super.createChildren();
             this.createView(ui.loginUI.uiView);
-
         }
-
     }
 }
 
@@ -55,8 +51,6 @@ module ui {
         
             super.createChildren();
             this.createView(ui.promptUI.uiView);
-
         }
-
     }
 }

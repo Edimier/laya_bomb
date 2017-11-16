@@ -33,6 +33,7 @@ var gameMain = /** @class */ (function () {
         }
     };
     gameMain.prototype.handleGameEndNtf = function (msg) {
+        this.showGameOver();
         console.log("游戏结束！");
     };
     gameMain.prototype.destroyBlock = function (blocks, index) {
@@ -57,6 +58,11 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.playBombSound = function () {
         Laya.SoundManager.playSound("comp/bombing.mp3", 1);
+    };
+    gameMain.prototype.showGameOver = function () {
+        var gameOver = new Laya.Sprite();
+        gameOver.loadImage("comp/game_over.png");
+        Laya.stage.addChild(gameOver);
     };
     gameMain.prototype.handleOperateNtf = function (msg) {
         if (msg) {
@@ -122,9 +128,7 @@ var gameMain = /** @class */ (function () {
                         if (node) {
                             node.text = "DIE";
                             node.color = "#ff0000";
-                            var gameOver = new Laya.Sprite();
-                            gameOver.loadImage("comp/game_over.png");
-                            Laya.stage.addChild(gameOver);
+                            this.showGameOver();
                         }
                     }
                     else {
