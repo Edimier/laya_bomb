@@ -1,19 +1,22 @@
 D .
 D comp
+P C62026C0 back.png
 P D12221A9 bg.png
-P 533EFA35 bg2.png
+P 58216B17 bg2.png
 R F83CF1FA bomb.mp3
 P 5E7D1273 bomb.png
 P 1984DBB1 bomb_word.png
 R D1BBCCEC bombing.mp3
-P 13E93110 brick.png
 P B03390E5 btn_close.png
 P 1F3929EA button.png
 P 70037B76 front.png
 P 137DD7BC game_over.png
 P 5EDC128C label.png
-P 4D93CB2F loginBg.png
+P 29F1DFC0 loginBg3.png
 P 2F0FFAD5 score.png
-P 7D24E884 stone.png
-P 6D55334E strick.png
+P F906F575 sound_close.png
+P 5CC7D551 sound_open.png
+P 26C549E9 stone.png
+P 647D5452 stone2.png
+P BDAA9C9E strick.png
 P BDA71F88 textinput.png

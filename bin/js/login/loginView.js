@@ -14,7 +14,7 @@ var loginView = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this._success = false;
         _this._http = new HTTPServer();
-        _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
+        _this.pos((Laya.stage.width - 1136) / 2, (Laya.stage.height - 640) / 2);
         _this.bt_login.on(Laya.Event.CLICK, _this, _this.handleLogin);
         server.on("LOGIN_SUCCESS", _this, _this.loginSuccess);
         //server.on("LOGIN_FAILED", this, this.loginFailed);

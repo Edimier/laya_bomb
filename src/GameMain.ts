@@ -2,7 +2,7 @@
 class GameMain{
     constructor()
     {
-        Laya.init(600,400, laya.webgl.WebGL);
+        Laya.init(1136,640, laya.webgl.WebGL);
         this.initStage();
         this.loadResource();
     }
@@ -24,7 +24,6 @@ class GameMain{
         Laya.loader.load(uiResArry, Laya.Handler.create(this, ()=>{
             server = new Server();
             Laya.stage.addChild(new loginView());
-            sound.PlayBgMusic();
         }));
     }
 }

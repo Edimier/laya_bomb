@@ -3,7 +3,7 @@
     "type":"View",
     "selectedBox":1,
     "selecteID":7,
-    "props":{"width":600,"sceneColor":"#000000","height":400},
+    "props":{"width":1136,"sceneColor":"#000000","height":640},
     "nodeParent":-1,
     "label":"View",
     "isOpen":true,
@@ -15,21 +15,20 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":0,"width":600,"skin":"comp/loginBg.png","height":400},
+            "props":{"y":0,"x":0,"skin":"comp/loginBg3.png"},
             "nodeParent":1,
             "label":"Image",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":6,
+            "compId":10,
             "child":[
-                ],
-            "$LOCKED":true
+                ]
         },
         {
             "x":15,
             "type":"Label",
-            "props":{"y":327,"x":389,"width":190,"var":"bt_login","text":"游客登陆","styleSkin":"comp/label.png","height":45,"fontSize":40,"font":"SimSun","align":"center"},
+            "props":{"y":547,"x":798,"width":278,"var":"bt_login","text":"点我游客登陆","styleSkin":"comp/label.png","height":45,"fontSize":40,"font":"SimSun","color":"#f3ea16","align":"center"},
             "nodeParent":1,
             "label":"Label(bt_login)",
             "isDirectory":false,
@@ -44,7 +43,7 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":11,"x":5,"skin":"comp/bomb_word.png"},
+            "props":{"y":19,"x":21,"width":443,"skin":"comp/bomb_word.png","height":107},
             "nodeParent":1,
             "label":"Image",
             "isDirectory":false,

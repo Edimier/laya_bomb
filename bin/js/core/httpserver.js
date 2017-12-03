@@ -32,4 +32,4 @@ var HTTPServer = /** @class */ (function (_super) {
     };
     return HTTPServer;
 }(Laya.EventDispatcher));
-//# sourceMappingURL=HTTPServer.js.map
+//# sourceMappingURL=httpserver.js.map

@@ -14,13 +14,17 @@ class gameMain{
     
     private _nickname : string;
     private _die : boolean;
+    private _rank : number;
+    private _row : number;
+    private _val : number;
 
     private _timer : Laya.Timer;
 
     constructor(){
         this._startx = 90;
-        this._starty = 80;
+        this._starty = 100;
         this._stricks = {};
+        this._val = 8;
         this._die = false;
 
         this._timer = new Laya.Timer();
@@ -105,8 +109,8 @@ class gameMain{
                     let bomb = new Laya.Sprite();
                     bomb.loadImage("comp/bomb.png");
                     this._bg.addChild(bomb);
-                    let pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                    bomb.pos(pos[0], pos[1]-10);
+                    let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                    bomb.pos(pos[0], pos[1] - this._val);
 
                     this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._bg.numChildren - 4);
 
@@ -177,8 +181,8 @@ class gameMain{
     }
 
     private calc_pos_xy(i:number, width?:number, height?:number, basex?:number, basey?:number){
-        let x = i % 15;
-        let y = Math.floor(i/15);
+        let x = i % this._rank;
+        let y = Math.floor(i/this._rank);
         basex = basex ? basex : this._startx;
         basey = basey ? basey : this._starty;
         width = width ? width : this._width;
@@ -204,13 +208,13 @@ class gameMain{
         text.fontSize = 5;
         other.addChild(text);
 
-        let pos = this.calc_pos_xy(index, this._width, this._height - 10);
-        other.pos(pos[0], pos[1] - 10 );
+        let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+        other.pos(pos[0], pos[1] - this._val );
         this._players.push(other);
     }
 
     private calc_pos_index(x:number, y:number):number{
-        let yy = Math.floor( (y - this._starty )/(this._height - 10) )* 15;
+        let yy = Math.floor( (y - this._starty )/(this._height - this._val) )* this._rank;
         let xx = ( x - this._startx )/this._width;
         let ii = Math.floor(Math.floor(yy) + xx);
         return ii;
@@ -232,15 +236,15 @@ class gameMain{
     }
 
     private moveDown(){
-        if(this.can_move(this._self.x, this._self.y + 20 + this._height - 10, Define.DOWN)){
-            this._self.y += this._height - 10;
+        if(this.can_move(this._self.x, this._self.y + 20 + this._height - this._val, Define.DOWN)){
+            this._self.y += this._height - this._val;
             this.send_pos();
         }
     }
 
     private moveUp(){
         if(this.can_move(this._self.x, this._self.y  + 20 - this._height + 10, Define.UP)){
-            this._self.y -= this._height - 10;
+            this._self.y -= this._height - this._val;
             this.send_pos();
         }
     }
@@ -288,12 +292,29 @@ class gameMain{
         server.sendData("game.OperateReq", {session:this._session, optn:2, opt:[this._uid, index + 1, 1]});
     }
 
+    private handleKeyDown(e: Laya.Event){
+        console.log(e.keyCode);
+        if(e.keyCode==37){//左
+            this.handleMove(Define.LEFT);
+       }else if(e.keyCode==39){//右
+           this.handleMove(Define.RIGHT);
+       }else if(e.keyCode==38){//上
+           this.handleMove(Define.UP);
+       }else if(e.keyCode==40){//下
+           this.handleMove(Define.DOWN);
+       }else if(e.keyCode == 65){
+           this.handleBomb();
+       }
+    }
+
     private initButton(){
         let bg:gameBg = this._bg;
         bg.m_down.on(Laya.Event.CLICK, this, this.handleMove, [Define.DOWN]);
         bg.m_up.on(Laya.Event.CLICK, this, this.handleMove,[Define.UP]);
         bg.m_left.on(Laya.Event.CLICK, this, this.handleMove,[Define.LEFT]);
         bg.m_right.on(Laya.Event.CLICK, this, this.handleMove, [Define.RIGHT]);
+
+        Laya.stage.on(Laya.Event.KEY_UP, this, this.handleKeyDown);
         bg.bt_bomb.on(Laya.Event.CLICK, this, this.handleBomb);
 
         bg.m_down.on(Laya.Event.MOUSE_DOWN, this, ()=>{ this._bg.m_down.alpha = 1;});
@@ -313,20 +334,28 @@ class gameMain{
         this._map = msg.wall;
         this._bg = new gameBg();
         this._self = new player();
+        this._rank = msg.rank;
+        this._row = msg.row;
 
         this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
-        this._bg.bt_sound.on(Laya.Event.CLICK, this, ()=>{  
-            let switchm:boolean = sound.switchMusic();
-            if(switchm){
-                this._bg.bt_sound.text.text = "stop music";
-            } else {
-                this._bg.bt_sound.text.text = "open music";
-            }
 
-        });
+        
+
+        // this._bg.bt_sound.on(Laya.Event.CLICK, this, ()=>{  
+        //     let switchm:boolean = sound.switchMusic();
+        //     if(switchm){
+        //         this._bg.bt_sound.text.text = "stop music";
+        //     } else {
+        //         this._bg.bt_sound.text.text = "open music";
+        //     }
+
+        // });
         
         Laya.stage.addChild(this._bg);
         this.initButton();
+
+        sound.initSound(1022, 19, true);
+        sound.PlayBgMusic();
 
         let bg:gameBg = this._bg;
 
@@ -342,26 +371,29 @@ class gameMain{
 
         for(let i = 0; i < msg.wall.length; ++i){
             let type = msg.wall[i];
-            let x = i % 15;
-            let y = Math.floor(i/15);
+            let x = i % this._rank;
+            let y = Math.floor(i/this._rank);
 
             if(type == Define.STRICK){
                 let sp = new Laya.Sprite();
                 sp.loadImage("comp/strick.png");
                 bg.addChild(sp);
-                let height = sp.height - 10;
-                let width = sp.width;
+                sp.scale(0.1,0.1);
+
+                let height = 30;  //sp.height - 10;
+                let width = 28; //sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
                 //this._self._blocks[i] = sp;
                 this._stricks[i] = sp;
             } else if(type == Define.STONE){
                 let sp = new Laya.Sprite();
-                sp.loadImage("comp/stone.png");
+                sp.loadImage("comp/stone2.png");
+                sp.scale(0.1,0.1);
                 bg.addChild(sp);
-                let height = sp.height - 10;
-                let width = sp.width;
-                this._height = sp.height;
-                this._width = sp.width;
+                let height = 30;  //sp.height - 10;
+                let width = 28; //sp.width;
+                this._height = 38; //sp.height;
+                this._width = 28; //sp.width;
 
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
@@ -383,8 +415,8 @@ class gameMain{
                 let self = this._self;
                 self.loadImage("comp/front.png");
                 bg.addChild(self);
-                let pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                self.pos(pos[0], pos[1] - 10);
+                let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                self.pos(pos[0], pos[1] - this._val);
 
                 let text:Laya.Text = new Laya.Text();
                 text.text = nickname;
@@ -422,9 +454,9 @@ class gameMain{
 
             for(let p of this._players){
                 if(p._uid == uid){
-                    let pos = this.calc_pos_xy(index, this._width, this._height - 10);
+                    let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                     
-                    p.pos(pos[0], pos[1] - 10);
+                    p.pos(pos[0], pos[1] - this._val);
                 }
             }
         }

@@ -1,8 +1,9 @@
 var gameMain = /** @class */ (function () {
     function gameMain() {
         this._startx = 90;
-        this._starty = 80;
+        this._starty = 100;
         this._stricks = {};
+        this._val = 8;
         this._die = false;
         this._timer = new Laya.Timer();
         this._players = new Array();
@@ -75,8 +76,8 @@ var gameMain = /** @class */ (function () {
                     var bomb = new Laya.Sprite();
                     bomb.loadImage("comp/bomb.png");
                     this._bg.addChild(bomb);
-                    var pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                    bomb.pos(pos[0], pos[1] - 10);
+                    var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                    bomb.pos(pos[0], pos[1] - this._val);
                     this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 4);
                     if (uid == this._uid) {
                         this._self._blocks[index] = bomb;
@@ -152,8 +153,8 @@ var gameMain = /** @class */ (function () {
         }
     };
     gameMain.prototype.calc_pos_xy = function (i, width, height, basex, basey) {
-        var x = i % 15;
-        var y = Math.floor(i / 15);
+        var x = i % this._rank;
+        var y = Math.floor(i / this._rank);
         basex = basex ? basex : this._startx;
         basey = basey ? basey : this._starty;
         width = width ? width : this._width;
@@ -174,12 +175,12 @@ var gameMain = /** @class */ (function () {
         text.align = "center";
         text.fontSize = 5;
         other.addChild(text);
-        var pos = this.calc_pos_xy(index, this._width, this._height - 10);
-        other.pos(pos[0], pos[1] - 10);
+        var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+        other.pos(pos[0], pos[1] - this._val);
         this._players.push(other);
     };
     gameMain.prototype.calc_pos_index = function (x, y) {
-        var yy = Math.floor((y - this._starty) / (this._height - 10)) * 15;
+        var yy = Math.floor((y - this._starty) / (this._height - this._val)) * this._rank;
         var xx = (x - this._startx) / this._width;
         var ii = Math.floor(Math.floor(yy) + xx);
         return ii;
@@ -198,14 +199,14 @@ var gameMain = /** @class */ (function () {
         return false;
     };
     gameMain.prototype.moveDown = function () {
-        if (this.can_move(this._self.x, this._self.y + 20 + this._height - 10, Define.DOWN)) {
-            this._self.y += this._height - 10;
+        if (this.can_move(this._self.x, this._self.y + 20 + this._height - this._val, Define.DOWN)) {
+            this._self.y += this._height - this._val;
             this.send_pos();
         }
     };
     gameMain.prototype.moveUp = function () {
         if (this.can_move(this._self.x, this._self.y + 20 - this._height + 10, Define.UP)) {
-            this._self.y -= this._height - 10;
+            this._self.y -= this._height - this._val;
             this.send_pos();
         }
     };
@@ -249,6 +250,24 @@ var gameMain = /** @class */ (function () {
         var index = this.calc_pos_index(this._self.x, this._self.y + 20);
         server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
     };
+    gameMain.prototype.handleKeyDown = function (e) {
+        console.log(e.keyCode);
+        if (e.keyCode == 37) {
+            this.handleMove(Define.LEFT);
+        }
+        else if (e.keyCode == 39) {
+            this.handleMove(Define.RIGHT);
+        }
+        else if (e.keyCode == 38) {
+            this.handleMove(Define.UP);
+        }
+        else if (e.keyCode == 40) {
+            this.handleMove(Define.DOWN);
+        }
+        else if (e.keyCode == 65) {
+            this.handleBomb();
+        }
+    };
     gameMain.prototype.initButton = function () {
         var _this = this;
         var bg = this._bg;
@@ -256,6 +275,7 @@ var gameMain = /** @class */ (function () {
         bg.m_up.on(Laya.Event.CLICK, this, this.handleMove, [Define.UP]);
         bg.m_left.on(Laya.Event.CLICK, this, this.handleMove, [Define.LEFT]);
         bg.m_right.on(Laya.Event.CLICK, this, this.handleMove, [Define.RIGHT]);
+        Laya.stage.on(Laya.Event.KEY_UP, this, this.handleKeyDown);
         bg.bt_bomb.on(Laya.Event.CLICK, this, this.handleBomb);
         bg.m_down.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.m_down.alpha = 1; });
         bg.m_up.on(Laya.Event.MOUSE_DOWN, this, function () { _this._bg.m_up.alpha = 1; });
@@ -269,22 +289,24 @@ var gameMain = /** @class */ (function () {
         bg.bt_bomb.on(Laya.Event.MOUSE_UP, this, function () { _this._bg.bt_bomb.alpha = 0.5; });
     };
     gameMain.prototype.handleMapNtf = function (msg) {
-        var _this = this;
         this._map = msg.wall;
         this._bg = new gameBg();
         this._self = new player();
+        this._rank = msg.rank;
+        this._row = msg.row;
         this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
-        this._bg.bt_sound.on(Laya.Event.CLICK, this, function () {
-            var switchm = sound.switchMusic();
-            if (switchm) {
-                _this._bg.bt_sound.text.text = "stop music";
-            }
-            else {
-                _this._bg.bt_sound.text.text = "open music";
-            }
-        });
+        // this._bg.bt_sound.on(Laya.Event.CLICK, this, ()=>{  
+        //     let switchm:boolean = sound.switchMusic();
+        //     if(switchm){
+        //         this._bg.bt_sound.text.text = "stop music";
+        //     } else {
+        //         this._bg.bt_sound.text.text = "open music";
+        //     }
+        // });
         Laya.stage.addChild(this._bg);
         this.initButton();
+        sound.initSound(1022, 19, true);
+        sound.PlayBgMusic();
         var bg = this._bg;
         bg.m_lable1.text = "我的得分";
         bg.m_lable2.text = "对手得分";
@@ -295,26 +317,28 @@ var gameMain = /** @class */ (function () {
         bg.m_lable2.fontSize = 10;
         for (var i = 0; i < msg.wall.length; ++i) {
             var type = msg.wall[i];
-            var x = i % 15;
-            var y = Math.floor(i / 15);
+            var x = i % this._rank;
+            var y = Math.floor(i / this._rank);
             if (type == Define.STRICK) {
                 var sp = new Laya.Sprite();
                 sp.loadImage("comp/strick.png");
                 bg.addChild(sp);
-                var height = sp.height - 10;
-                var width = sp.width;
+                sp.scale(0.1, 0.1);
+                var height = 30; //sp.height - 10;
+                var width = 28; //sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
                 //this._self._blocks[i] = sp;
                 this._stricks[i] = sp;
             }
             else if (type == Define.STONE) {
                 var sp = new Laya.Sprite();
-                sp.loadImage("comp/stone.png");
+                sp.loadImage("comp/stone2.png");
+                sp.scale(0.1, 0.1);
                 bg.addChild(sp);
-                var height = sp.height - 10;
-                var width = sp.width;
-                this._height = sp.height;
-                this._width = sp.width;
+                var height = 30; //sp.height - 10;
+                var width = 28; //sp.width;
+                this._height = 38; //sp.height;
+                this._width = 28; //sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
         }
@@ -334,8 +358,8 @@ var gameMain = /** @class */ (function () {
                 var self_1 = this._self;
                 self_1.loadImage("comp/front.png");
                 bg.addChild(self_1);
-                var pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                self_1.pos(pos[0], pos[1] - 10);
+                var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                self_1.pos(pos[0], pos[1] - this._val);
                 var text = new Laya.Text();
                 text.text = nickname;
                 bg.m_lable1.text = nickname;
@@ -368,8 +392,8 @@ var gameMain = /** @class */ (function () {
             for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
                 var p = _a[_i];
                 if (p._uid == uid) {
-                    var pos = this.calc_pos_xy(index, this._width, this._height - 10);
-                    p.pos(pos[0], pos[1] - 10);
+                    var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                    p.pos(pos[0], pos[1] - this._val);
                 }
             }
         }

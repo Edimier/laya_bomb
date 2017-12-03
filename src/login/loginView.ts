@@ -4,12 +4,15 @@ class loginView extends ui.loginUI{
 
     private _success:boolean;
 
+    private flag:boolean;
+
     constructor(){
         super();
+        
         this._success = false;
         this._http = new HTTPServer();
 
-        this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
+        this.pos( (Laya.stage.width - 1136)/2, (Laya.stage.height - 640)/2);
         this.bt_login.on(Laya.Event.CLICK, this, this.handleLogin);
         server.on("LOGIN_SUCCESS", this, this.loginSuccess);
         //server.on("LOGIN_FAILED", this, this.loginFailed);
@@ -17,7 +20,9 @@ class loginView extends ui.loginUI{
         
         this._http.on("HTTPCOMPLETE", this, this.httpLoginSuccess)
         this._http.on("HTTPERROR", this, this.httpLoginFailed)
+        
     }
+
 
     private handleLogin(){
         this.bt_login.disabled = true;

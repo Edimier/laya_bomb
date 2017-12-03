@@ -22,8 +22,10 @@ message MapNtf{
     	required string nickname = 3;
     }
 	required int32 session = 1;
-	repeated int32 wall = 3;
-	repeated Info  pos = 4;
+	required int32 rank = 2;
+	required int32 row = 3;
+	repeated int32 wall = 4;
+	repeated Info  pos = 5;
 }
 
 // 通知给服务端自己最新的位置信息pos=index

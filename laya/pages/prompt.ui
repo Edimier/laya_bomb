@@ -2,8 +2,8 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":6,
-    "props":{"width":600,"sceneColor":"#000000","height":400},
+    "selecteID":2,
+    "props":{"width":1136,"sceneColor":"#000000","height":640},
     "nodeParent":-1,
     "label":"View",
     "isOpen":true,
@@ -15,7 +15,7 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"30,5,5,5","height":400},
+            "props":{"y":0,"x":0,"width":1136,"skin":"comp/bg.png","sizeGrid":"30,5,5,5","height":640},
             "nodeParent":1,
             "label":"Image",
             "isDirectory":false,
@@ -28,7 +28,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":267,"x":223,"width":153,"var":"bt_return","skin":"comp/button.png","sizeGrid":"4,4,4,4","label":"RETURN","height":69},
+            "props":{"y":389,"x":491,"width":153,"var":"bt_return","skin":"comp/button.png","sizeGrid":"4,4,4,4","label":"RETURN","height":69},
             "nodeParent":1,
             "label":"Button(bt_return)",
             "isDirectory":false,
@@ -41,7 +41,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":109,"x":146,"width":324,"var":"bt_prompt","styleSkin":"comp/label.png","height":113,"align":"center"},
+            "props":{"y":130,"x":170,"width":817,"var":"bt_prompt","styleSkin":"comp/label.png","height":113,"align":"center"},
             "nodeParent":1,
             "label":"Label(bt_prompt)",
             "isDirectory":false,

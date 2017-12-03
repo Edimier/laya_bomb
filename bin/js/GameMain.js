@@ -1,7 +1,7 @@
 // 程序入口
 var GameMain = /** @class */ (function () {
     function GameMain() {
-        Laya.init(600, 400, laya.webgl.WebGL);
+        Laya.init(1136, 640, laya.webgl.WebGL);
         this.initStage();
         this.loadResource();
     }
@@ -21,7 +21,6 @@ var GameMain = /** @class */ (function () {
         Laya.loader.load(uiResArry, Laya.Handler.create(this, function () {
             server = new Server();
             Laya.stage.addChild(new loginView());
-            sound.PlayBgMusic();
         }));
     };
     return GameMain;
