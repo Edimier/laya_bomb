@@ -29,4 +29,27 @@
    <item name="comp/game_over.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
    <item name="comp/loginBg2.jpg" type="Image" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/loginBg3.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
+   <item name="bombing/01.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/02.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/03.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/04.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/05.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/06.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/07.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/08.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/09.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/10.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/11.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/12.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/13.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/14.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/15.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/16.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/17.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/18.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/19.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/20.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/21.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/22.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="bombing/23.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
 </res>

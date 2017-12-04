@@ -4,6 +4,7 @@ var gameMain = /** @class */ (function () {
         this._starty = 100;
         this._stricks = {};
         this._val = 8;
+        this._val2 = 16;
         this._die = false;
         this._timer = new Laya.Timer();
         this._players = new Array();
@@ -45,6 +46,12 @@ var gameMain = /** @class */ (function () {
             blocks[index].destroy();
             blocks[index] = undefined;
             this._map[index] = 3;
+            var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+            var bombing = new ui.bombingUI();
+            bombing.pos(pos[0], pos[1]);
+            var node_1 = Laya.stage.addChild(bombing);
+            bombing.ani_bombing.play(0, false);
+            Laya.timer.once(1500, this, function () { Laya.stage.removeChild(node_1); });
         }
     };
     gameMain.prototype.changeToGray = function (p) {
@@ -68,16 +75,23 @@ var gameMain = /** @class */ (function () {
         Laya.stage.addChild(gameOver);
     };
     gameMain.prototype.handleOperateNtf = function (msg) {
+        var _this = this;
         if (msg) {
             if (msg.result == 2) {
                 for (var i = 0; i < msg.opt.length; i = i + 3) {
                     var uid = msg.opt[i];
                     var index = msg.opt[i + 1];
-                    var bomb = new Laya.Sprite();
-                    bomb.loadImage("comp/bomb.png");
+                    var bomb = new Laya.Animation();
+                    bomb.loadAnimation("scale_bomb.ani");
                     this._bg.addChild(bomb);
                     var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                     bomb.pos(pos[0], pos[1] - this._val);
+                    bomb.play();
+                    // let bomb = new Laya.Sprite();
+                    // bomb.loadImage("comp/bomb.png");
+                    // this._bg.addChild(bomb);
+                    // let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                    // bomb.pos(pos[0], pos[1] - this._val);
                     this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 4);
                     if (uid == this._uid) {
                         this._self._blocks[index] = bomb;
@@ -102,7 +116,19 @@ var gameMain = /** @class */ (function () {
                         this.destroyBlock(this._stricks, msg.opt[i]);
                     }
                     if (msg.score && msg.score > 0) {
-                        this._bg.m_score1.text = msg.score.toString();
+                        var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+                        var coin = new Laya.Sprite();
+                        coin.loadImage("comp/coin.png");
+                        coin.pos(pos[0], pos[1]);
+                        coin.scale(0.1, 0.1);
+                        var node_2 = Laya.stage.addChild(coin);
+                        var tox = this._bg.m_score1.x;
+                        var toy = this._bg.m_score1.y;
+                        Laya.Tween.to(coin, { x: tox, y: toy }, 3000, Laya.Ease.elasticInOut, null, 0);
+                        Laya.timer.once(2300, this, function () {
+                            Laya.stage.removeChild(node_2);
+                            _this._bg.m_score1.text = msg.score.toString();
+                        });
                     }
                 }
                 else {
@@ -187,7 +213,7 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.send_pos = function (pos_index) {
         if (server) {
-            pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + 20);
+            pos_index = pos_index ? pos_index : this.calc_pos_index(this._self.x, this._self.y + this._val2);
             server.sendData("game.SelfMessageNtf", { session: this._session, pos: pos_index });
         }
     };
@@ -199,25 +225,25 @@ var gameMain = /** @class */ (function () {
         return false;
     };
     gameMain.prototype.moveDown = function () {
-        if (this.can_move(this._self.x, this._self.y + 20 + this._height - this._val, Define.DOWN)) {
+        if (this.can_move(this._self.x, this._self.y + this._val2 + this._height - this._val, Define.DOWN)) {
             this._self.y += this._height - this._val;
             this.send_pos();
         }
     };
     gameMain.prototype.moveUp = function () {
-        if (this.can_move(this._self.x, this._self.y + 20 - this._height + 10, Define.UP)) {
+        if (this.can_move(this._self.x, this._self.y + this._val2 - this._height + 10, Define.UP)) {
             this._self.y -= this._height - this._val;
             this.send_pos();
         }
     };
     gameMain.prototype.moveLeft = function () {
-        if (this.can_move(this._self.x - this._width, this._self.y + 20, Define.LEFT)) {
+        if (this.can_move(this._self.x - this._width, this._self.y + this._val2, Define.LEFT)) {
             this._self.x -= this._width;
             this.send_pos();
         }
     };
     gameMain.prototype.moveRight = function () {
-        if (this.can_move(this._self.x + this._width, this._self.y + 20, Define.RIGHT)) {
+        if (this.can_move(this._self.x + this._width, this._self.y + this._val2, Define.RIGHT)) {
             this._self.x += this._width;
             this.send_pos();
         }
@@ -243,15 +269,16 @@ var gameMain = /** @class */ (function () {
                 break;
         }
     };
+    // 投放炸弹
     gameMain.prototype.handleBomb = function () {
         if (this._die) {
             return;
         }
-        var index = this.calc_pos_index(this._self.x, this._self.y + 20);
+        var index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
         server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
     };
     gameMain.prototype.handleKeyDown = function (e) {
-        console.log(e.keyCode);
+        //console.log(e.keyCode);
         if (e.keyCode == 37) {
             this.handleMove(Define.LEFT);
         }
@@ -320,9 +347,18 @@ var gameMain = /** @class */ (function () {
             var x = i % this._rank;
             var y = Math.floor(i / this._rank);
             if (type == Define.STRICK) {
+                if (i % 2 == 0) {
+                    var sp2 = new Laya.Sprite();
+                    bg.addChild(sp2);
+                    sp2.loadImage("comp/shadow.png");
+                    sp2.scale(0.5, 0.5);
+                    var height2 = 30; //sp.height - 10;
+                    var width2 = 28; //sp.width;
+                    sp2.pos(this._startx + x * width2 - 1, this._starty + y * height2 + 6);
+                }
                 var sp = new Laya.Sprite();
-                sp.loadImage("comp/strick.png");
                 bg.addChild(sp);
+                sp.loadImage("comp/strick.png");
                 sp.scale(0.1, 0.1);
                 var height = 30; //sp.height - 10;
                 var width = 28; //sp.width;
@@ -332,14 +368,25 @@ var gameMain = /** @class */ (function () {
             }
             else if (type == Define.STONE) {
                 var sp = new Laya.Sprite();
+                bg.addChild(sp);
                 sp.loadImage("comp/stone2.png");
                 sp.scale(0.1, 0.1);
-                bg.addChild(sp);
                 var height = 30; //sp.height - 10;
                 var width = 28; //sp.width;
                 this._height = 38; //sp.height;
                 this._width = 28; //sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
+            }
+            else if (type == Define.EMPTYPLACE && i % 2 == 0) {
+                var sp = new Laya.Sprite();
+                bg.addChild(sp);
+                sp.loadImage("comp/shadow.png");
+                sp.scale(0.5, 0.5);
+                var height = 30; //sp.height - 10;
+                var width = 28; //sp.width;
+                this._height = 38; //sp.height;
+                this._width = 28; //sp.width;
+                sp.pos(this._startx + x * width - 1, this._starty + y * height + 6);
             }
         }
         for (var _i = 0, _a = ["up", "down", "left", "right", "bomb"]; _i < _a.length; _i++) {

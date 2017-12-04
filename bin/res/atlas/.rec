@@ -1,4 +1,29 @@
 D .
+D bombing
+P 2339130A 01.png
+P 9A66A008 02.png
+P 55AB40B7 03.png
+P D94F656F 04.png
+P DF7E34D4 05.png
+P 9949DFA5 06.png
+P 8CA4EF4A 07.png
+P 7CD41232 08.png
+P 74CF333C 09.png
+P 4245B98E 10.png
+P 832D4423 11.png
+P B09F1DE5 12.png
+P 249AD2F4 13.png
+P 7556C12C 14.png
+P D42D6DF8 15.png
+P DED3ADBB 16.png
+P 518D85DC 17.png
+P 2DE8760B 18.png
+P F928ECE0 19.png
+P DE6EC8E4 20.png
+P 2E3A4229 21.png
+P 830978FE 22.png
+P 0C548A0B 23.png
+P 0B9957A4 24.png
 D comp
 P C62026C0 back.png
 P D12221A9 bg.png
@@ -9,11 +34,13 @@ P 1984DBB1 bomb_word.png
 R 8822593C bombing.mp3
 P B03390E5 btn_close.png
 P 1F3929EA button.png
+P CFB67B64 coin.png
 P 70037B76 front.png
 P 137DD7BC game_over.png
 P 5EDC128C label.png
 P 29F1DFC0 loginBg3.png
 P 2F0FFAD5 score.png
+P 19086F79 shadow.png
 P F906F575 sound_close.png
 P 5CC7D551 sound_open.png
 P 26C549E9 stone.png

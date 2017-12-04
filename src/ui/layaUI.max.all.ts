@@ -2,26 +2,44 @@
 import View=laya.ui.View;
 import Dialog=laya.ui.Dialog;
 module ui {
+    export class bombingUI extends View {
+		public ani_bombing:Laya.Animation;
+
+        public static  uiView:any ={"type":"View","props":{},"child":[{"type":"Animation","props":{"y":4,"x":-1,"width":146,"var":"ani_bombing","source":"bombing/01.png,bombing/02.png,bombing/03.png,bombing/04.png,bombing/05.png,bombing/06.png,bombing/07.png,bombing/08.png,bombing/09.png,bombing/10.png,bombing/11.png,bombing/12.png,bombing/13.png,bombing/14.png,bombing/15.png,bombing/16.png,bombing/17.png,bombing/18.png,bombing/19.png,bombing/20.png,bombing/21.png,bombing/22.png,bombing/23.png","scaleY":0.3,"scaleX":0.3,"pivotY":36,"pivotX":29,"height":142,"autoPlay":false}}]};
+        constructor(){ super()}
+        createChildren():void {
+        
+            super.createChildren();
+            this.createView(ui.bombingUI.uiView);
+
+        }
+
+    }
+}
+
+module ui {
     export class gamebgUI extends View {
 		public bt_game_bg:Laya.Image;
-		public m_score1:Laya.Label;
-		public m_score2:Laya.Label;
 		public m_up:Laya.Button;
 		public m_down:Laya.Button;
 		public m_right:Laya.Button;
 		public m_left:Laya.Button;
 		public bt_bomb:Laya.Button;
-		public m_lable1:Laya.Label;
 		public m_lable2:Laya.Label;
 		public bt_close:Laya.Button;
+		public m_score1:Laya.Label;
+		public m_lable1:Laya.Label;
+		public m_score2:Laya.Label;
 
-        public static  uiView:any ={"type":"View","props":{"y":0,"x":0,"width":1136,"height":640},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"bt_game_bg","skin":"comp/bg2.png","name":"gamebg"}},{"type":"Label","props":{"y":103,"x":46,"width":67,"var":"m_score1","text":"0","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"}},{"type":"Label","props":{"y":103,"x":928,"width":67,"var":"m_score2","text":"0","height":25,"gray":true,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#bed6b6","align":"center"}},{"type":"Button","props":{"y":322,"x":95,"width":80,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":80,"alpha":0.5}},{"type":"Button","props":{"y":480,"x":95,"width":80,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":80,"alpha":0.5}},{"type":"Button","props":{"y":401,"x":174,"width":80,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":80,"alpha":0.5}},{"type":"Button","props":{"y":399,"x":18,"width":80,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":80,"alpha":0.5}},{"type":"Button","props":{"y":407,"x":946,"width":100,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":100,"alpha":0.5}},{"type":"Label","props":{"y":37,"x":46,"wordWrap":true,"width":67,"var":"m_lable1","height":50,"gray":false,"font":"娃娃体-简"}},{"type":"Label","props":{"y":37,"x":928,"width":67,"var":"m_lable2","height":50,"gray":true}},{"type":"Button","props":{"y":29,"x":1030,"width":80,"var":"bt_close","skin":"comp/back.png","height":80}}]};
+        public static  uiView:any ={"type":"View","props":{"y":0,"x":0,"width":1136,"height":640},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"bt_game_bg","skin":"comp/bg2.png","name":"gamebg"}},{"type":"Button","props":{"y":322,"x":95,"width":80,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":80,"alpha":0.5}},{"type":"Button","props":{"y":480,"x":95,"width":80,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":80,"alpha":0.5}},{"type":"Button","props":{"y":401,"x":174,"width":80,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":80,"alpha":0.5}},{"type":"Button","props":{"y":399,"x":18,"width":80,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":80,"alpha":0.5}},{"type":"Button","props":{"y":407,"x":946,"width":100,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":100,"alpha":0.5}},{"type":"Label","props":{"y":46,"x":712,"width":111,"var":"m_lable2","height":48,"gray":true}},{"type":"Button","props":{"y":29,"x":1030,"width":80,"var":"bt_close","skin":"comp/back.png","height":80}},{"type":"Image","props":{"y":46,"x":192,"width":34,"skin":"comp/coin.png","height":34}},{"type":"Label","props":{"y":46,"x":232,"width":75,"var":"m_score1","text":"0","height":27,"fontSize":20,"font":"SimHei","align":"center"}},{"type":"Label","props":{"y":46,"x":60,"width":111,"var":"m_lable1","height":48}},{"type":"Label","props":{"y":46,"x":898,"width":67,"var":"m_score2","text":"0","height":25,"fontSize":20,"font":"SimHei","align":"center"}},{"type":"Image","props":{"y":46,"x":849,"width":34,"skin":"comp/coin.png","height":34}}]};
         constructor(){ super()}
         createChildren():void {
         
             super.createChildren();
             this.createView(ui.gamebgUI.uiView);
+
         }
+
     }
 }
 
@@ -35,7 +53,9 @@ module ui {
         
             super.createChildren();
             this.createView(ui.loginUI.uiView);
+
         }
+
     }
 }
 
@@ -50,6 +70,8 @@ module ui {
         
             super.createChildren();
             this.createView(ui.promptUI.uiView);
+
         }
+
     }
 }

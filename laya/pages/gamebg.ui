@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":309,
+    "selecteID":329,
     "props":{"y":0,"x":0,"width":1136,"sceneColor":"#000000","height":640},
     "nodeParent":-1,
     "label":"View",
@@ -25,32 +25,6 @@
             "child":[
                 ],
             "$LOCKED":true
-        },
-        {
-            "x":15,
-            "type":"Label",
-            "props":{"y":103,"x":46,"width":67,"var":"m_score1","text":"0","styleSkin":"comp/label.png","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"},
-            "nodeParent":1,
-            "label":"Label(m_score1)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":147,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
-            "type":"Label",
-            "props":{"y":103,"x":928,"width":67,"var":"m_score2","text":"0","styleSkin":"comp/label.png","height":25,"gray":true,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#bed6b6","align":"center"},
-            "nodeParent":1,
-            "label":"Label(m_score2)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":149,
-            "child":[
-                ]
         },
         {
             "x":15,
@@ -120,20 +94,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":37,"x":46,"wordWrap":true,"width":67,"var":"m_lable1","styleSkin":"comp/label.png","height":50,"gray":false,"font":"娃娃体-简"},
-            "nodeParent":1,
-            "label":"Label(m_lable1)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":310,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
-            "type":"Label",
-            "props":{"y":37,"x":928,"width":67,"var":"m_lable2","styleSkin":"comp/label.png","height":50,"gray":true},
+            "props":{"y":46,"x":712,"width":111,"var":"m_lable2","styleSkin":"comp/label.png","height":48,"gray":true},
             "nodeParent":1,
             "label":"Label(m_lable2)",
             "isDirectory":false,
@@ -153,6 +114,71 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":325,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Image",
+            "props":{"y":46,"x":192,"width":34,"skin":"comp/coin.png","height":34},
+            "nodeParent":1,
+            "label":"Image",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":326,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Label",
+            "props":{"y":46,"x":232,"width":75,"var":"m_score1","text":"0","styleSkin":"comp/label.png","height":27,"fontSize":20,"font":"SimHei","align":"center"},
+            "nodeParent":1,
+            "label":"Label(m_score1)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":327,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Label",
+            "props":{"y":46,"x":60,"width":111,"var":"m_lable1","styleSkin":"comp/label.png","height":48},
+            "nodeParent":1,
+            "label":"Label(m_lable1)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":328,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Label",
+            "props":{"y":46,"x":898,"width":67,"var":"m_score2","text":"0","styleSkin":"comp/label.png","height":25,"fontSize":20,"font":"SimHei","align":"center"},
+            "nodeParent":1,
+            "label":"Label(m_score2)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":329,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Image",
+            "props":{"y":46,"x":849,"width":34,"skin":"comp/coin.png","height":34},
+            "nodeParent":1,
+            "label":"Image",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":330,
             "child":[
                 ]
         }],
