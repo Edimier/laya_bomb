@@ -21,7 +21,7 @@ class gameMain{
     private _timer : Laya.Timer;
 
     constructor(){
-        this._startx = 90;
+        this._startx = 280;
         this._starty = 100;
         this._stricks = {};
         this._val = 8;
@@ -354,7 +354,7 @@ class gameMain{
         Laya.stage.addChild(this._bg);
         this.initButton();
 
-        sound.initSound(1022, 19, true);
+        sound.initSound(1040, 120, true);
         sound.PlayBgMusic();
 
         let bg:gameBg = this._bg;
@@ -471,6 +471,8 @@ class gameMain{
             server.sendData("game.QuitGameReq", {session:this._session, roomid:1000, status:0});
             server.logout();
         }
+
+        sound.StopPlayBgMusic();
 
         for(let p of this._players){
             p.removeSelf();

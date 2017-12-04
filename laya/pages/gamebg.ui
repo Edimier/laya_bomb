@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":326,
+    "selecteID":309,
     "props":{"y":0,"x":0,"width":1136,"sceneColor":"#000000","height":640},
     "nodeParent":-1,
     "label":"View",
@@ -29,7 +29,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":130,"x":15,"width":67,"var":"m_score1","text":"0","styleSkin":"comp/label.png","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"},
+            "props":{"y":103,"x":46,"width":67,"var":"m_score1","text":"0","styleSkin":"comp/label.png","height":25,"fontSize":20,"font":"SimHei","color":"#01000b","borderColor":"#40e20d","bold":true,"align":"center"},
             "nodeParent":1,
             "label":"Label(m_score1)",
             "isDirectory":false,
@@ -42,7 +42,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":143,"x":1022,"width":67,"var":"m_score2","text":"0","styleSkin":"comp/label.png","height":25,"gray":true,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#bed6b6","align":"center"},
+            "props":{"y":103,"x":928,"width":67,"var":"m_score2","text":"0","styleSkin":"comp/label.png","height":25,"gray":true,"fontSize":20,"font":"SimHei","color":"#88100e","borderColor":"#bed6b6","align":"center"},
             "nodeParent":1,
             "label":"Label(m_score2)",
             "isDirectory":false,
@@ -55,7 +55,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":213,"x":41,"width":40,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":40,"alpha":0.5},
+            "props":{"y":322,"x":95,"width":80,"var":"m_up","skin":"comp/button.png","name":"up","label":"up","height":80,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(m_up)",
             "isDirectory":false,
@@ -68,7 +68,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":290,"x":41,"width":40,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":40,"alpha":0.5},
+            "props":{"y":480,"x":95,"width":80,"var":"m_down","skin":"comp/button.png","name":"down","label":"down","height":80,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(m_down)",
             "isDirectory":false,
@@ -81,7 +81,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":252,"x":80,"width":40,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":40,"alpha":0.5},
+            "props":{"y":401,"x":174,"width":80,"var":"m_right","skin":"comp/button.png","name":"right","label":"right","height":80,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(m_right)",
             "isDirectory":false,
@@ -94,7 +94,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":252,"x":3,"width":40,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":40,"alpha":0.5},
+            "props":{"y":399,"x":18,"width":80,"var":"m_left","skin":"comp/button.png","name":"left","label":"left","height":80,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(m_left)",
             "isDirectory":false,
@@ -107,7 +107,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":408,"x":1054,"width":50,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":50,"alpha":0.5},
+            "props":{"y":407,"x":946,"width":100,"var":"bt_bomb","skin":"comp/button.png","name":"bomb","label":"bomb","height":100,"alpha":0.5},
             "nodeParent":1,
             "label":"Button(bt_bomb)",
             "isDirectory":false,
@@ -120,7 +120,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":67,"x":15,"wordWrap":true,"width":67,"var":"m_lable1","styleSkin":"comp/label.png","height":50,"gray":false,"font":"娃娃体-简"},
+            "props":{"y":37,"x":46,"wordWrap":true,"width":67,"var":"m_lable1","styleSkin":"comp/label.png","height":50,"gray":false,"font":"娃娃体-简"},
             "nodeParent":1,
             "label":"Label(m_lable1)",
             "isDirectory":false,
@@ -133,7 +133,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":78,"x":1022,"width":67,"var":"m_lable2","styleSkin":"comp/label.png","height":50,"gray":true},
+            "props":{"y":37,"x":928,"width":67,"var":"m_lable2","styleSkin":"comp/label.png","height":50,"gray":true},
             "nodeParent":1,
             "label":"Label(m_lable2)",
             "isDirectory":false,
@@ -146,7 +146,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":19,"x":1072,"width":40,"var":"bt_close","skin":"comp/back.png","height":33},
+            "props":{"y":29,"x":1030,"width":80,"var":"bt_close","skin":"comp/back.png","height":80},
             "nodeParent":1,
             "label":"Button(bt_close)",
             "isDirectory":false,

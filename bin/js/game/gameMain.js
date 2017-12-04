@@ -1,6 +1,6 @@
 var gameMain = /** @class */ (function () {
     function gameMain() {
-        this._startx = 90;
+        this._startx = 280;
         this._starty = 100;
         this._stricks = {};
         this._val = 8;
@@ -305,7 +305,7 @@ var gameMain = /** @class */ (function () {
         // });
         Laya.stage.addChild(this._bg);
         this.initButton();
-        sound.initSound(1022, 19, true);
+        sound.initSound(1040, 120, true);
         sound.PlayBgMusic();
         var bg = this._bg;
         bg.m_lable1.text = "我的得分";
@@ -405,6 +405,7 @@ var gameMain = /** @class */ (function () {
             server.sendData("game.QuitGameReq", { session: this._session, roomid: 1000, status: 0 });
             server.logout();
         }
+        sound.StopPlayBgMusic();
         for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
             var p = _a[_i];
             p.removeSelf();

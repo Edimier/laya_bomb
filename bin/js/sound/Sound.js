@@ -18,7 +18,7 @@ var Sound = /** @class */ (function () {
         else {
             this._soundImage.loadImage("comp/sound_close.png");
         }
-        this._soundImage.scale(0.5, 0.5);
+        //this._soundImage.scale(0.5,0.5);
         Laya.stage.addChild(this._soundImage);
         this._soundImage.once(Laya.Event.CLICK, this, this.switchMusic);
     };
