@@ -1,5 +1,6 @@
 class gameMain{
     private _players:Array<player>;
+    //private _playersOtherCnt:number;
     private _uid:number;
     private _session:number;
     private _self:player;
@@ -22,7 +23,7 @@ class gameMain{
     private _timer : Laya.Timer;
 
     constructor(){
-        this._startx = 280;
+        this._startx = 250;
         this._starty = 100;
         this._stricks = {};
         this._val = 8;
@@ -51,14 +52,23 @@ class gameMain{
 
     private handleLeaveTable(msg:any){
         if(msg){
+            
             for(let i = 0; i < this._players.length; ++i){
                 let p = this._players[i];
                 if(p && p._uid == msg.uid){
+             
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
+
+                    console.log(this._bg.imge_head_other.numChildren);
+                    this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
+                    let sp:Laya.Sprite = new Laya.Sprite();
+                    sp.loadImage("comp/waitting.png");
+                    this._bg.imge_head_other.addChild(sp);
                 }
             }
+            
         }
     }
 
@@ -84,7 +94,7 @@ class gameMain{
         }
     }
 
-    private changeToGray(p:player){
+    private changeToGray(p:player) : Laya.ColorFilter{
         let colorMatrix:any = 
         [
             0.3086, 0.6094, 0.0820, 0, 0,  //R
@@ -93,9 +103,10 @@ class gameMain{
             0, 0, 0, 1, 0, //A
         ];
         //创建灰色颜色滤镜
-        var GrayFilter:Laya.ColorFilter = new Laya.ColorFilter(colorMatrix);
+        let GrayFilter:Laya.ColorFilter = new Laya.ColorFilter(colorMatrix);
         //添加灰色颜色滤镜效果
         p.filters = [GrayFilter];
+        return GrayFilter;
     }
 
     private playBombSound(){
@@ -115,7 +126,6 @@ class gameMain{
                     let uid = msg.opt[i];
                     let index = msg.opt[i + 1];
 
-
                     let bomb:Laya.Animation = new Laya.Animation();
                     bomb.loadAnimation("scale_bomb.ani");
                     this._bg.addChild(bomb);
@@ -123,19 +133,13 @@ class gameMain{
                     bomb.pos(pos[0], pos[1] - this._val);
                     bomb.play();
 
-                    // let bomb = new Laya.Sprite();
-                    // bomb.loadImage("comp/bomb.png");
-                    // this._bg.addChild(bomb);
-                    // let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
-                    // bomb.pos(pos[0], pos[1] - this._val);
-
                     this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._bg.numChildren - 4);
 
                     if (uid == this._uid){
                         this._self._blocks[index] = bomb;
                     } else {
                         for(let p of this._players){
-                            if(p._uid == uid){
+                            if(p && p._uid == uid){
                                 p._blocks[index] = bomb;
                                 break;
                             }
@@ -167,7 +171,7 @@ class gameMain{
                     }
                 } else {
                     for(let p of this._players){
-                        if(p._uid == msg.uid){
+                        if(p && p._uid == msg.uid){
                             this.destroyBlock(p._blocks, index);
                             this.playBombSound();
                             for(let i = 1; i < msg.opt.length; ++i){
@@ -183,23 +187,29 @@ class gameMain{
                 for( let uid of msg.opt){
                     if ( uid == this._uid){
                         this._die = true;
-                        this.changeToGray(this._self);
-                        let node = this._self.getChildAt(this._self.numChildren - 1) as Laya.Text;
-                        if(node){
-                            node.text = "DIE";
-                            node.color = "#ff0000";
-                            this.showGameOver();
-                        }
+                        let filter = this.changeToGray(this._self);
+                        this._bg.imge_head_self.filters = [filter];
+                        // let node = this._self.getChildAt(this._self.numChildren - 1) as Laya.Text;
+                        // if(node){
+                        //     node.text = "DIE";
+                        //     node.color = "#ff0000";
+                        //     this.showGameOver();
+                        // }
+
+                        this._bg.imge_head_self.loadImage("comp/die.png");
                     } else {
                         for(let p of this._players){
-                            if(p._uid == uid){
+                            if(p && p._uid == uid){
                                 p._die = true;
-                                this.changeToGray(p);
-                                let node = this._self.getChildAt(p.numChildren - 1) as Laya.Text;
-                                if(node){
-                                    node.text = "DIE";
-                                    node.color = "#ff0000";
-                                }
+                                let filter = this.changeToGray(p);
+                                this._bg.imge_head_other.filters = [filter];
+                                this._bg.imge_head_other.loadImage("comp/die.png");
+
+                                // let node = this._self.getChildAt(p.numChildren - 1) as Laya.Text;
+                                // if(node){
+                                //     node.text = "DIE";
+                                //     node.color = "#ff0000";
+                                // }
                             }
                         }
 
@@ -219,27 +229,25 @@ class gameMain{
         return [basex + x * width, basey + y * height];
     }
 
-    private createOtherPlayer(uid, index, nickname){
+    private createOtherPlayer(uid, index, nickname):boolean{
         let other = new player();
+        other.initPlayer("carton2");
+        let sp : Laya.Sprite = new Laya.Sprite();
+        sp.loadImage("carton2/head.png");
+        this._bg.imge_head_other.addChild(sp);
+        other.interval = 50;
         other._uid = uid;
         other._nickname = nickname;
-        other.loadImage("comp/front.png");
+        //other.loadImage("comp/front.png");
         this._bg.addChild(other);
+        other.play(0, false, "stand");
 
-        let text:Laya.Text = new Laya.Text();
-        //text.text = other._uid.toString();
-
-        text.text = nickname;
         this._bg.m_lable2.text = nickname;
-
-        text.pos(0, -other.height/2);
-        text.align = "center";
-        text.fontSize = 5;
-        other.addChild(text);
 
         let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
         other.pos(pos[0], pos[1] - this._val );
         this._players.push(other);
+        return true;
     }
 
     private calc_pos_index(x:number, y:number):number{
@@ -266,6 +274,7 @@ class gameMain{
 
     private moveDown(){
         if(this.can_move(this._self.x, this._self.y + this._val2 + this._height - this._val, Define.DOWN)){
+            this._self.play(0, false, "front");
             this._self.y += this._height - this._val;
             this.send_pos();
         }
@@ -273,19 +282,24 @@ class gameMain{
 
     private moveUp(){
         if(this.can_move(this._self.x, this._self.y  + this._val2 - this._height + 10, Define.UP)){
+            this._self.play(0, false, "behind");
             this._self.y -= this._height - this._val;
             this.send_pos();
+            
         }
     }
 
     private moveLeft(){
         if(this.can_move(this._self.x - this._width, this._self.y + this._val2, Define.LEFT)){
+            this._self.play(0, false, "left");
             this._self.x -= this._width;
             this.send_pos();
+            
         }
     }
     private moveRight(){
         if(this.can_move(this._self.x + this._width, this._self.y + this._val2, Define.RIGHT)){
+            this._self.play(0, false, "right");
             this._self.x += this._width;
             this.send_pos();
         }
@@ -365,22 +379,17 @@ class gameMain{
         this._map = msg.wall;
         this._bg = new gameBg();
         this._self = new player();
+        let self = this._self;
+        self.initPlayer("carton1");
+        this._bg.imge_head_self.loadImage("carton1/head.png");
+        
+        self.interval = 50;
+        self.scaleY = 0.85;
+
         this._rank = msg.rank;
         this._row = msg.row;
 
         this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
-
-        
-
-        // this._bg.bt_sound.on(Laya.Event.CLICK, this, ()=>{  
-        //     let switchm:boolean = sound.switchMusic();
-        //     if(switchm){
-        //         this._bg.bt_sound.text.text = "stop music";
-        //     } else {
-        //         this._bg.bt_sound.text.text = "open music";
-        //     }
-
-        // });
         
         Laya.stage.addChild(this._bg);
         this.initButton();
@@ -389,9 +398,6 @@ class gameMain{
         sound.PlayBgMusic();
 
         let bg:gameBg = this._bg;
-
-        bg.m_lable1.text = "我的得分";
-        bg.m_lable2.text = "对手得分";
 
         bg.m_lable1.align = "center";
         bg.m_lable1.fontSize = 18;
@@ -404,8 +410,6 @@ class gameMain{
             let type = msg.wall[i];
             let x = i % this._rank;
             let y = Math.floor(i/this._rank);
-
-            
 
             if(type == Define.STRICK){
                 if(i % 2 == 0){
@@ -462,35 +466,36 @@ class gameMain{
             }
         }
 
+        let createOtherSuccess:boolean;
         for(let p of msg.pos){
             let uid = p.uid;
             let index = p.index
             let nickname = p.nickname;
 
             if(uid == this._uid){
-                let self = this._self;
-                self.loadImage("comp/front.png");
+                //self.loadImage("comp/front.png");
                 bg.addChild(self);
+                self.play(0, true, "stand");
                 let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                 self.pos(pos[0], pos[1] - this._val);
 
-                let text:Laya.Text = new Laya.Text();
-                text.text = nickname;
                 bg.m_lable1.text = nickname;
 
-                text.pos(0, -self.height/2);
-                text.align = "center";
-                text.fontSize = 10;
-                text.bold = true;
-                this._self.addChild(text);
             } else {
-                this.createOtherPlayer(uid, index, nickname);
+                createOtherSuccess = this.createOtherPlayer(uid, index, nickname);
             }
         }
+        if( ! createOtherSuccess){
+            if(this._bg.imge_head_other.numChildren > 0){
+                this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
+            }
+            
+            let sp:Laya.Sprite = new Laya.Sprite();
+            sp.loadImage("comp/waitting.png");
+            this._bg.imge_head_other.addChild(sp);
+        } 
     }
-
     
-
     private rand(low: number, up: number) {
         return Math.floor(Math.random() * (up - low + 1) + low);
     }
@@ -503,16 +508,30 @@ class gameMain{
         }
     }
 
+    private handleCartonEff(p:player, tox:number, toy : number){
+        let x = p.x;
+        let y = p.y;
+        if(x < tox){
+            p.play(0, false, "right");
+        } else if(x > tox){
+            p.play(0, false, "left");
+        } else if(y > toy){
+            p.play(0, false, "behind");
+        } else if( y < toy){
+            p.play(0, false, "front");
+        }
+        p.pos(tox, toy);
+    }
+
     private handleGameMessageNtf(msg:any){
         for(let i = 0; i < msg.pmsg.length; i = i + 2){
             let uid = msg.pmsg[i];
             let index = msg.pmsg[i + 1];
 
             for(let p of this._players){
-                if(p._uid == uid){
+                if(p && p._uid == uid){
                     let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
-                    
-                    p.pos(pos[0], pos[1] - this._val);
+                    this.handleCartonEff(p, pos[0], pos[1] - this._val);
                 }
             }
         }
@@ -531,8 +550,10 @@ class gameMain{
         sound.StopPlayBgMusic();
 
         for(let p of this._players){
-            p.removeSelf();
-            p.destroy();
+            if(p){
+                p.removeSelf();
+                p.destroy();
+            }
         }
         this._self.removeSelf();
         this._self.destroy();

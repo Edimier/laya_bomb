@@ -24,7 +24,7 @@
    <item name="comp/radio.png" type="Radio" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/radiogroup.png" type="RadioGroup" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/bg2.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
-   <item name="comp/bomb_word.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
+   <item name="comp/title.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
    <item name="comp/loginBg.png" type="Image" compress="0" pack="2" quality="80" props="" picType="0"/>
    <item name="comp/game_over.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
    <item name="comp/loginBg2.jpg" type="Image" compress="0" pack="2" quality="80" props="" picType="0"/>
@@ -52,4 +52,5 @@
    <item name="bombing/21.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
    <item name="bombing/22.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
    <item name="bombing/23.png" type="Image" compress="0" pack="0" quality="80" props="width=28@@!@@height=28" picType="0"/>
+   <item name="carton1/behind1.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0"/>
 </res>

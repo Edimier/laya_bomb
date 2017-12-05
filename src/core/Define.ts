@@ -9,5 +9,5 @@ class Define{
     static STRICK:number = 2;
     static EMPTYPLACE:number = 3;
     static PLAYER:number = 4;
-    static DEBUG_NET:boolean = false;
+    static DEBUG_NET:boolean = true;
 }

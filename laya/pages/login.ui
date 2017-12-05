@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":7,
+    "selecteID":12,
     "props":{"width":1136,"sceneColor":"#000000","height":640},
     "nodeParent":-1,
     "label":"View",
@@ -43,13 +43,13 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":19,"x":21,"width":443,"skin":"comp/bomb_word.png","height":107},
+            "props":{"y":38,"x":83,"skin":"comp/title.png"},
             "nodeParent":1,
             "label":"Image",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":9,
+            "compId":12,
             "child":[
                 ]
         }],

@@ -16,6 +16,22 @@ var player = /** @class */ (function (_super) {
         _this._die = false;
         return _this;
     }
+    player.prototype.initPlayer = function (aniType) {
+        this._aniType = aniType;
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "stand", 1, 1), "stand");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "left", 1, 4), "left");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "right", 1, 4), "right");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "front", 1, 4), "front");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "behind", 1, 4), "behind");
+    };
+    player.prototype.aniUrls = function (aniType, aniName, start, end) {
+        var urls = [];
+        for (var i = start; i <= end; ++i) {
+            //动画资源路径要和动画图集打包前的资源命名对应起来
+            urls.push(aniType + "/" + aniName + i + ".png");
+        }
+        return urls;
+    };
     return player;
-}(Laya.Sprite));
+}(Laya.Animation));
 //# sourceMappingURL=player.js.map
