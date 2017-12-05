@@ -15,11 +15,15 @@ class player extends Laya.Animation{
 
     public initPlayer(aniType:string){
         this._aniType = aniType;
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "stand",1, 1),"stand");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "left",1, 4),"left");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "right",1, 4),"right");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "front",1, 4),"front");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "behind",1, 4),"behind");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "stand",1, 1),this._aniType + "stand");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "left",1, 4),this._aniType + "left");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "right",1, 4),this._aniType + "right");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "front",1, 4),this._aniType + "front");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "behind",1, 4),this._aniType + "behind");
+    }
+
+    public Play(start?:any, loop?: boolean, name?: string, showWarn?: boolean){
+        this.play(start, loop, this._aniType + name, showWarn);
     }
 
     private aniUrls(aniType:string, aniName:string, start:number, end:number){

@@ -3,7 +3,7 @@ class promptView extends ui.promptUI{
     constructor(msg?:string){
         super();
 
-        this.pos( (Laya.stage.width-600)/2, (Laya.stage.height-400)/2);
+        this.pos( (Laya.stage.width - 1136) / 2, (Laya.stage.height - 640) / 2);
         this.bt_return.on(Laya.Event.CLICK, this, this.handleClose);
 
         if(msg){

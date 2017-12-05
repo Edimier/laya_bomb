@@ -1,1 +1,1 @@
-{"build":{"versionName":"laya_game.2.1","merge":true,"compress":true,"recompile":true,"regenerateUI":true,"regenerateAtlas":true}}
+{"build":{"versionName":"laya_game.2.0","merge":true,"compress":true,"recompile":true,"regenerateUI":true,"regenerateAtlas":true},"pngquant":{"showAdvanceOptions":false,"colors":8,"speed":3,"quality":[50,90],"table":{"unselectedFiles":[]}}}

@@ -32,7 +32,6 @@ var gameMain = /** @class */ (function () {
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
-                    console.log(this._bg.imge_head_other.numChildren);
                     this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
                     var sp = new Laya.Sprite();
                     sp.loadImage("comp/waitting.png");
@@ -193,18 +192,18 @@ var gameMain = /** @class */ (function () {
         height = height ? height : this._height;
         return [basex + x * width, basey + y * height];
     };
-    gameMain.prototype.createOtherPlayer = function (uid, index, nickname, seatid) {
+    gameMain.prototype.createOtherPlayer = function (uid, index, nickname, image) {
         var other = new player();
-        other.initPlayer("carton" + seatid);
+        other.initPlayer("carton" + image);
         var sp = new Laya.Sprite();
-        sp.loadImage("carton" + seatid + "/head.png");
+        sp.loadImage("carton" + image + "/head.png");
         this._bg.imge_head_other.addChild(sp);
         other.interval = 50;
+        other.scaleY = 0.85;
         other._uid = uid;
         other._nickname = nickname;
-        //other.loadImage("comp/front.png");
-        //this._bg.addChild(other);
-        other.play(0, false, "stand");
+        this._bg.addChild(other);
+        other.Play(0, false, "stand");
         this._bg.m_lable2.text = nickname;
         var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
         other.pos(pos[0], pos[1] - this._val);
@@ -232,28 +231,28 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.moveDown = function () {
         if (this.can_move(this._self.x, this._self.y + this._val2 + this._height - this._val, Define.DOWN)) {
-            this._self.play(0, false, "front");
+            this._self.Play(0, false, "front");
             this._self.y += this._height - this._val;
             this.send_pos();
         }
     };
     gameMain.prototype.moveUp = function () {
         if (this.can_move(this._self.x, this._self.y + this._val2 - this._height + 10, Define.UP)) {
-            this._self.play(0, false, "behind");
+            this._self.Play(0, false, "behind");
             this._self.y -= this._height - this._val;
             this.send_pos();
         }
     };
     gameMain.prototype.moveLeft = function () {
         if (this.can_move(this._self.x - this._width, this._self.y + this._val2, Define.LEFT)) {
-            this._self.play(0, false, "left");
+            this._self.Play(0, false, "left");
             this._self.x -= this._width;
             this.send_pos();
         }
     };
     gameMain.prototype.moveRight = function () {
         if (this.can_move(this._self.x + this._width, this._self.y + this._val2, Define.RIGHT)) {
-            this._self.play(0, false, "right");
+            this._self.Play(0, false, "right");
             this._self.x += this._width;
             this.send_pos();
         }
@@ -285,11 +284,9 @@ var gameMain = /** @class */ (function () {
             return;
         }
         var index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
-        //console.log("handleBomb")
         server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
     };
     gameMain.prototype.handleKeyDown = function (e) {
-        //console.log(e.keyCode);
         if (e.keyCode == 37) {
             this.handleMove(Define.LEFT);
         }
@@ -303,7 +300,6 @@ var gameMain = /** @class */ (function () {
             this.handleMove(Define.DOWN);
         }
         else if (e.keyCode == 65) {
-            //console.log(11111)
             this.handleBomb();
         }
     };
@@ -329,24 +325,20 @@ var gameMain = /** @class */ (function () {
     };
     gameMain.prototype.handleEnterTable = function (msg) {
         if (msg.uid == this._uid) {
-            this._bg = new gameBg();
-            this._self = new player();
-            var self_1 = this._self;
-            self_1.initPlayer("carton" + msg.seatid);
-            this._bg.imge_head_self.loadImage("carton" + msg.seatid + "/head.png");
-            self_1.interval = 50;
-            self_1.scaleY = 0.85;
-            this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
-            Laya.stage.addChild(this._bg);
+            console.log("error handleEnterTable");
         }
         else {
-            this.createOtherPlayer(msg.uid, msg.index, msg.nickname, msg.seatid);
+            this._bg.imge_head_other.destroyChildren();
+            this.createOtherPlayer(msg.uid, msg.index, msg.nickname, msg.image);
         }
     };
     gameMain.prototype.handleMapNtf = function (msg) {
         this._map = msg.wall;
+        this._bg = new gameBg();
         this._rank = msg.rank;
         this._row = msg.row;
+        this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
+        Laya.stage.addChild(this._bg);
         this.initButton();
         sound.initSound(1040, 120, true);
         sound.PlayBgMusic();
@@ -356,6 +348,10 @@ var gameMain = /** @class */ (function () {
         bg.m_lable1.bold = true;
         bg.m_lable2.align = "center";
         bg.m_lable2.fontSize = 10;
+        var height = 30; //sp.height - 10;
+        var width = 28; //sp.width;
+        this._height = 38; //sp.height;
+        this._width = 28; //sp.width;
         for (var i = 0; i < msg.wall.length; ++i) {
             var type = msg.wall[i];
             var x = i % this._rank;
@@ -366,17 +362,14 @@ var gameMain = /** @class */ (function () {
                     bg.addChild(sp2);
                     sp2.loadImage("comp/shadow.png");
                     sp2.scale(0.5, 0.5);
-                    var height2 = 30; //sp.height - 10;
-                    var width2 = 28; //sp.width;
-                    sp2.pos(this._startx + x * width2 - 1, this._starty + y * height2 + 6);
+                    sp2.pos(this._startx + x * width - 1, this._starty + y * height + 6);
                 }
                 var sp = new Laya.Sprite();
                 bg.addChild(sp);
                 sp.loadImage("comp/strick.png");
                 sp.scale(0.1, 0.1);
-                var height = 30; //sp.height - 10;
-                var width = 28; //sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
+                //this._self._blocks[i] = sp;
                 this._stricks[i] = sp;
             }
             else if (type == Define.STONE) {
@@ -384,10 +377,6 @@ var gameMain = /** @class */ (function () {
                 bg.addChild(sp);
                 sp.loadImage("comp/stone2.png");
                 sp.scale(0.1, 0.1);
-                var height = 30; //sp.height - 10;
-                var width = 28; //sp.width;
-                this._height = 38; //sp.height;
-                this._width = 28; //sp.width;
                 sp.pos(this._startx + x * width, this._starty + y * height);
             }
             else if (type == Define.EMPTYPLACE && i % 2 == 0) {
@@ -395,10 +384,6 @@ var gameMain = /** @class */ (function () {
                 bg.addChild(sp);
                 sp.loadImage("comp/shadow.png");
                 sp.scale(0.5, 0.5);
-                var height = 30; //sp.height - 10;
-                var width = 28; //sp.width;
-                this._height = 38; //sp.height;
-                this._width = 28; //sp.width;
                 sp.pos(this._startx + x * width - 1, this._starty + y * height + 6);
             }
         }
@@ -409,6 +394,7 @@ var gameMain = /** @class */ (function () {
                 bg.setChildIndex(node, bg.numChildren - 1);
             }
         }
+        this._self = new player();
         var self = this._self;
         var createOtherSuccess;
         for (var _b = 0, _c = msg.pos; _b < _c.length; _b++) {
@@ -416,28 +402,29 @@ var gameMain = /** @class */ (function () {
             var uid = p.uid;
             var index = p.index;
             var nickname = p.nickname;
+            var image = p.image;
             if (uid == this._uid) {
+                self.initPlayer("carton" + image);
+                this._bg.imge_head_self.loadImage("carton" + image + "/head.png");
+                self.interval = 50;
+                self.scaleY = 0.85;
                 bg.addChild(self);
-                self.play(0, true, "stand");
+                self.Play(0, true, "stand");
                 var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                 self.pos(pos[0], pos[1] - this._val);
                 bg.m_lable1.text = nickname;
             }
-        }
-        for (var _d = 0, _e = this._players; _d < _e.length; _d++) {
-            var p = _e[_d];
-            if (p && p._uid != this._uid) {
-                bg.addChild(p);
-                createOtherSuccess = true;
+            else {
+                createOtherSuccess = this.createOtherPlayer(uid, index, nickname, image);
             }
         }
         if (!createOtherSuccess) {
-            if (bg.imge_head_other.numChildren > 0) {
-                bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
+            if (this._bg.imge_head_other.numChildren > 0) {
+                this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
             }
             var sp = new Laya.Sprite();
             sp.loadImage("comp/waitting.png");
-            bg.imge_head_other.addChild(sp);
+            this._bg.imge_head_other.addChild(sp);
         }
     };
     gameMain.prototype.rand = function (low, up) {
@@ -455,16 +442,16 @@ var gameMain = /** @class */ (function () {
         var x = p.x;
         var y = p.y;
         if (x < tox) {
-            p.play(0, false, "right");
+            p.Play(0, false, "right");
         }
         else if (x > tox) {
-            p.play(0, false, "left");
+            p.Play(0, false, "left");
         }
         else if (y > toy) {
-            p.play(0, false, "behind");
+            p.Play(0, false, "behind");
         }
         else if (y < toy) {
-            p.play(0, false, "front");
+            p.Play(0, false, "front");
         }
         p.pos(tox, toy);
     };

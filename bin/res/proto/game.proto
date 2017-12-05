@@ -20,6 +20,7 @@ message MapNtf{
 		required int32 uid = 1;
 		required int32 index = 2;
     	required string nickname = 3;
+    	required int32 image = 4;
     }
 	required int32 session = 1;
 	required int32 rank = 2;
@@ -33,7 +34,7 @@ message EnterTable{
 	required int32 uid = 2;
 	required int32 index = 3;
     required string nickname = 4;
-    required string seatid = 5;
+    required int32 image = 5;
 }
 
 

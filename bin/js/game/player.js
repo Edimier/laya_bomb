@@ -18,11 +18,14 @@ var player = /** @class */ (function (_super) {
     }
     player.prototype.initPlayer = function (aniType) {
         this._aniType = aniType;
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "stand", 1, 1), "stand");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "left", 1, 4), "left");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "right", 1, 4), "right");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "front", 1, 4), "front");
-        Laya.Animation.createFrames(this.aniUrls(this._aniType, "behind", 1, 4), "behind");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "stand", 1, 1), this._aniType + "stand");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "left", 1, 4), this._aniType + "left");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "right", 1, 4), this._aniType + "right");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "front", 1, 4), this._aniType + "front");
+        Laya.Animation.createFrames(this.aniUrls(this._aniType, "behind", 1, 4), this._aniType + "behind");
+    };
+    player.prototype.Play = function (start, loop, name, showWarn) {
+        this.play(start, loop, this._aniType + name, showWarn);
     };
     player.prototype.aniUrls = function (aniType, aniName, start, end) {
         var urls = [];

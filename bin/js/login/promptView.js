@@ -12,7 +12,7 @@ var promptView = /** @class */ (function (_super) {
     __extends(promptView, _super);
     function promptView(msg) {
         var _this = _super.call(this) || this;
-        _this.pos((Laya.stage.width - 600) / 2, (Laya.stage.height - 400) / 2);
+        _this.pos((Laya.stage.width - 1136) / 2, (Laya.stage.height - 640) / 2);
         _this.bt_return.on(Laya.Event.CLICK, _this, _this.handleClose);
         if (msg) {
             _this.bt_prompt.text = msg;

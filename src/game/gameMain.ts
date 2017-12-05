@@ -1,6 +1,6 @@
 class gameMain{
     private _players:Array<player>;
-    //private _playersOtherCnt:number;
+    
     private _uid:number;
     private _session:number;
     private _self:player;
@@ -61,8 +61,6 @@ class gameMain{
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
-
-                    console.log(this._bg.imge_head_other.numChildren);
                     this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
                     let sp:Laya.Sprite = new Laya.Sprite();
                     sp.loadImage("comp/waitting.png");
@@ -230,19 +228,19 @@ class gameMain{
         return [basex + x * width, basey + y * height];
     }
 
-    private createOtherPlayer(uid, index, nickname, seatid):boolean{
+    private createOtherPlayer(uid, index, nickname, image):boolean{
         let other = new player();
-        other.initPlayer("carton" + seatid);
+        other.initPlayer("carton" + image);
         let sp : Laya.Sprite = new Laya.Sprite();
-        sp.loadImage("carton" + seatid + "/head.png");
+        sp.loadImage("carton" + image + "/head.png");
         this._bg.imge_head_other.addChild(sp);
         other.interval = 50;
+        other.scaleY = 0.85;
         other._uid = uid;
         other._nickname = nickname;
-        //other.loadImage("comp/front.png");
-        //this._bg.addChild(other);
-
-        other.play(0, false, "stand");
+        
+        this._bg.addChild(other);
+        other.Play(0, false, "stand");
 
         this._bg.m_lable2.text = nickname;
 
@@ -276,7 +274,7 @@ class gameMain{
 
     private moveDown(){
         if(this.can_move(this._self.x, this._self.y + this._val2 + this._height - this._val, Define.DOWN)){
-            this._self.play(0, false, "front");
+            this._self.Play(0, false, "front");
             this._self.y += this._height - this._val;
             this.send_pos();
         }
@@ -284,7 +282,7 @@ class gameMain{
 
     private moveUp(){
         if(this.can_move(this._self.x, this._self.y  + this._val2 - this._height + 10, Define.UP)){
-            this._self.play(0, false, "behind");
+            this._self.Play(0, false, "behind");
             this._self.y -= this._height - this._val;
             this.send_pos();
             
@@ -293,15 +291,14 @@ class gameMain{
 
     private moveLeft(){
         if(this.can_move(this._self.x - this._width, this._self.y + this._val2, Define.LEFT)){
-            this._self.play(0, false, "left");
+            this._self.Play(0, false, "left");
             this._self.x -= this._width;
             this.send_pos();
-            
         }
     }
     private moveRight(){
         if(this.can_move(this._self.x + this._width, this._self.y + this._val2, Define.RIGHT)){
-            this._self.play(0, false, "right");
+            this._self.Play(0, false, "right");
             this._self.x += this._width;
             this.send_pos();
         }
@@ -335,13 +332,11 @@ class gameMain{
             return;
         }
         let index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
-        
-        //console.log("handleBomb")
         server.sendData("game.OperateReq", {session:this._session, optn:2, opt:[this._uid, index + 1, 1]});
     }
 
     private handleKeyDown(e: Laya.Event){
-        //console.log(e.keyCode);
+        
         if(e.keyCode==37){//左
             this.handleMove(Define.LEFT);
        }else if(e.keyCode==39){//右
@@ -351,7 +346,6 @@ class gameMain{
        }else if(e.keyCode==40){//下
            this.handleMove(Define.DOWN);
        }else if(e.keyCode == 65){
-           //console.log(11111)
            this.handleBomb();
        }
     }
@@ -381,28 +375,24 @@ class gameMain{
 
     private handleEnterTable(msg:any){
         if(msg.uid == this._uid){
-            this._bg = new gameBg();
-            this._self = new player();
-            let self = this._self;
-            self.initPlayer("carton" + msg.seatid);
-            this._bg.imge_head_self.loadImage("carton" + msg.seatid + "/head.png");
-            
-            self.interval = 50;
-            self.scaleY = 0.85;
-            this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
-            Laya.stage.addChild(this._bg);
-
+            console.log("error handleEnterTable")
         } else {
-            this.createOtherPlayer(msg.uid, msg.index, msg.nickname, msg.seatid);
+            this._bg.imge_head_other.destroyChildren();
+            this.createOtherPlayer(msg.uid, msg.index, msg.nickname, msg.image);
         }
     }
 
     private handleMapNtf(msg:any){
         this._map = msg.wall;
+        this._bg = new gameBg();
         
+
         this._rank = msg.rank;
         this._row = msg.row;
 
+        this._bg.bt_close.on(Laya.Event.CLICK, this, this.closeBack);
+        
+        Laya.stage.addChild(this._bg);
         this.initButton();
 
         sound.initSound(1040, 120, true);
@@ -417,6 +407,12 @@ class gameMain{
         bg.m_lable2.align = "center";
         bg.m_lable2.fontSize = 10;
 
+        let height = 30;  //sp.height - 10;
+        let width = 28; //sp.width;
+
+        this._height = 38; //sp.height;
+        this._width = 28; //sp.width;
+
         for(let i = 0; i < msg.wall.length; ++i){
             let type = msg.wall[i];
             let x = i % this._rank;
@@ -428,9 +424,8 @@ class gameMain{
                     bg.addChild(sp2);
                     sp2.loadImage("comp/shadow.png");
                     sp2.scale(0.5,0.5);
-                    let height2 = 30;  //sp.height - 10;
-                    let width2 = 28; //sp.width;
-                    sp2.pos(this._startx + x * width2 - 1, this._starty + y * height2 + 6);
+                    
+                    sp2.pos(this._startx + x * width - 1, this._starty + y * height + 6);
                 }
 
                 let sp = new Laya.Sprite();
@@ -438,20 +433,15 @@ class gameMain{
                 
                 sp.loadImage("comp/strick.png");
                 sp.scale(0.1,0.1);
-                let height = 30;  //sp.height - 10;
-                let width = 28; //sp.width;
+                
                 sp.pos(this._startx + x * width, this._starty + y * height);
+                //this._self._blocks[i] = sp;
                 this._stricks[i] = sp;
             } else if(type == Define.STONE){
                 let sp = new Laya.Sprite();
                 bg.addChild(sp);
                 sp.loadImage("comp/stone2.png");
                 sp.scale(0.1,0.1);
-              
-                let height = 30;  //sp.height - 10;
-                let width = 28; //sp.width;
-                this._height = 38; //sp.height;
-                this._width = 28; //sp.width;
 
                 sp.pos(this._startx + x * width, this._starty + y * height);
             } else if(type == Define.EMPTYPLACE && i % 2 == 0){
@@ -460,10 +450,6 @@ class gameMain{
                 
                 sp.loadImage("comp/shadow.png");
                 sp.scale(0.5,0.5);
-                let height = 30;  //sp.height - 10;
-                let width = 28; //sp.width;
-                this._height = 38; //sp.height;
-                this._width = 28; //sp.width;
 
                 sp.pos(this._startx + x * width - 1, this._starty + y * height + 6);
             }
@@ -476,39 +462,44 @@ class gameMain{
             }
         }
 
+        this._self = new player();
         let self = this._self;
 
         let createOtherSuccess:boolean;
+
         for(let p of msg.pos){
             let uid = p.uid;
             let index = p.index
             let nickname = p.nickname;
+            let image = p.image
 
             if(uid == this._uid){
+
+                self.initPlayer("carton" + image);
+                this._bg.imge_head_self.loadImage("carton" + image + "/head.png");
+                self.interval = 50;
+                self.scaleY = 0.85;
+
                 bg.addChild(self);
-                self.play(0, true, "stand");
+                self.Play(0, true, "stand");
                 let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                 self.pos(pos[0], pos[1] - this._val);
+
                 bg.m_lable1.text = nickname;
 
+            } else {
+                createOtherSuccess = this.createOtherPlayer(uid, index, nickname, image);
             }
         }
-
-        for(let p of this._players){
-            if(p && p._uid != this._uid){
-                bg.addChild(p);
-                createOtherSuccess = true;
-            }
-        }
-
         if( ! createOtherSuccess){
-            if(bg.imge_head_other.numChildren > 0){
-                bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
+            if(this._bg.imge_head_other.numChildren > 0){
+                this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
             }
+            
             let sp:Laya.Sprite = new Laya.Sprite();
             sp.loadImage("comp/waitting.png");
-            bg.imge_head_other.addChild(sp);
-        } 
+            this._bg.imge_head_other.addChild(sp);
+        }
     }
     
     private rand(low: number, up: number) {
@@ -527,13 +518,13 @@ class gameMain{
         let x = p.x;
         let y = p.y;
         if(x < tox){
-            p.play(0, false, "right");
+            p.Play(0, false, "right");
         } else if(x > tox){
-            p.play(0, false, "left");
+            p.Play(0, false, "left");
         } else if(y > toy){
-            p.play(0, false, "behind");
+            p.Play(0, false, "behind");
         } else if( y < toy){
-            p.play(0, false, "front");
+            p.Play(0, false, "front");
         }
         p.pos(tox, toy);
     }

@@ -9,7 +9,7 @@ var Define = /** @class */ (function () {
     Define.STRICK = 2;
     Define.EMPTYPLACE = 3;
     Define.PLAYER = 4;
-    Define.DEBUG_NET = true;
+    Define.DEBUG_NET = false;
     return Define;
 }());
 //# sourceMappingURL=Define.js.map
