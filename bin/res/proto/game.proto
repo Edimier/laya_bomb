@@ -28,6 +28,15 @@ message MapNtf{
 	repeated Info  pos = 5;
 }
 
+message EnterTable{
+	required int32 session = 1;
+	required int32 uid = 2;
+	required int32 index = 3;
+    required string nickname = 4;
+    required string seatid = 5;
+}
+
+
 // 通知给服务端自己最新的位置信息pos=index
 message SelfMessageNtf {
 	required int32 session = 1;
@@ -53,7 +62,8 @@ message OperateReq {
 
 // result = -1: 放置炸弹错误
 // result = 2: uid 在j处放置一个id类型的炸弹 opt = {uid,j,type}
-// result = 3: 炸弹炸了，把ijkm处的墙炸了 opt = {index, i,j,k,m} 
+// result = 3: 炸弹炸了，把ijkm处的墙炸了 opt = {index,i,j,k,m} 
+// result = 4: 炸弹空炸了，opt = {index}
 message OperateNtf {
 	required int32 session = 1;
 	required int32 result = 2;
@@ -72,7 +82,7 @@ message SetSession {
 	required int32 session = 1;
 }
 
-message LeaveTable {
+message LeaveTable{
 	required int32 session = 1;
 	required int32 reason = 2;
 	required int32 uid = 3;
