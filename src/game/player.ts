@@ -3,14 +3,45 @@ class player extends Laya.Animation{
     public _uid:number;
     public _nickname:string;
     public _blocks;
+    private _blocksCnt:number;
+    private _blockLimit:number;
+
     public _die : boolean;
 
     private _aniType : string;
 
+    public _score : number;
+
     constructor(){
         super();
+        this._blocksCnt = 0;
+        this._blockLimit = 3;
+        this._score = 0;
         this._blocks = {};
         this._die = false;
+    }
+
+    public incBlock() : boolean{
+        if(this._blocksCnt + 1 > this._blockLimit){
+            return false;
+        } else {
+            this._blocksCnt += 1;
+            return true;
+        }
+    }
+
+    public tryIncBlock() : boolean{
+        if(this._blocksCnt + 1 > this._blockLimit){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public descBlock(){
+        if(this._blocksCnt > 0){
+            this._blocksCnt -= 1;
+        }
     }
 
     public initPlayer(aniType:string){

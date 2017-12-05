@@ -12,10 +12,35 @@ var player = /** @class */ (function (_super) {
     __extends(player, _super);
     function player() {
         var _this = _super.call(this) || this;
+        _this._blocksCnt = 0;
+        _this._blockLimit = 3;
+        _this._score = 0;
         _this._blocks = {};
         _this._die = false;
         return _this;
     }
+    player.prototype.incBlock = function () {
+        if (this._blocksCnt + 1 > this._blockLimit) {
+            return false;
+        }
+        else {
+            this._blocksCnt += 1;
+            return true;
+        }
+    };
+    player.prototype.tryIncBlock = function () {
+        if (this._blocksCnt + 1 > this._blockLimit) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    player.prototype.descBlock = function () {
+        if (this._blocksCnt > 0) {
+            this._blocksCnt -= 1;
+        }
+    };
     player.prototype.initPlayer = function (aniType) {
         this._aniType = aniType;
         Laya.Animation.createFrames(this.aniUrls(this._aniType, "stand", 1, 1), this._aniType + "stand");

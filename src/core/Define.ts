@@ -9,5 +9,7 @@ class Define{
     static STRICK:number = 2;
     static EMPTYPLACE:number = 3;
     static PLAYER:number = 4;
+    static BOMB:number = 5;
+
     static DEBUG_NET:boolean = false;
 }

@@ -57,14 +57,25 @@ class gameMain{
             for(let i = 0; i < this._players.length; ++i){
                 let p = this._players[i];
                 if(p && p._uid == msg.uid){
+
+                    for(let bomb in p._blocks){
+                        if(bomb){
+                            p._blocks[bomb].removeSelf();
+                            p._blocks[bomb].destroy()
+                        }
+                    }
+                    
              
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
-                    this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
+                    
+                    this._bg.imge_head_other.removeChildren(0, this._bg.imge_head_other.numChildren); //removeChildAt(this._bg.imge_head_other.numChildren - 1);
+                    
                     let sp:Laya.Sprite = new Laya.Sprite();
                     sp.loadImage("comp/waitting.png");
                     this._bg.imge_head_other.addChild(sp);
+
                 }
             }
             
@@ -82,7 +93,7 @@ class gameMain{
             blocks[index].removeSelf();
             blocks[index].destroy();
             blocks[index] = undefined;
-            this._map[index] = 3;
+            this._map[index] = Define.EMPTYPLACE;
 
             let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
             let bombing = new ui.bombingUI();
@@ -93,7 +104,7 @@ class gameMain{
         }
     }
 
-    private changeToGray(p:player) : Laya.ColorFilter{
+    private changeToGray() : Laya.ColorFilter{
         let colorMatrix:any = 
         [
             0.3086, 0.6094, 0.0820, 0, 0,  //R
@@ -104,7 +115,7 @@ class gameMain{
         //创建灰色颜色滤镜
         let GrayFilter:Laya.ColorFilter = new Laya.ColorFilter(colorMatrix);
         //添加灰色颜色滤镜效果
-        p.filters = [GrayFilter];
+        //p.filters = [GrayFilter];
         return GrayFilter;
     }
 
@@ -118,28 +129,41 @@ class gameMain{
         Laya.stage.addChild(gameOver);
     }
 
+    private putBomb(index):Laya.Animation{
+        let bomb:Laya.Animation = new Laya.Animation();
+        bomb.loadAnimation("scale_bomb.ani");
+        this._bg.addChild(bomb);
+        let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+        bomb.pos(pos[0], pos[1] - this._val);
+        bomb.play();
+        this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._bg.numChildren - 4);
+        return bomb;
+    }    
+
     private handleOperateNtf(msg:any){
         if(msg){
             if (msg.result == 2){
                 for(let i = 0; i < msg.opt.length; i = i + 3){
                     let uid = msg.opt[i];
                     let index = msg.opt[i + 1];
-
-                    let bomb:Laya.Animation = new Laya.Animation();
-                    bomb.loadAnimation("scale_bomb.ani");
-                    this._bg.addChild(bomb);
-                    let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
-                    bomb.pos(pos[0], pos[1] - this._val);
-                    bomb.play();
-
-                    this._bg.setChildIndex(this._bg.getChildAt( this._bg.numChildren - 1), this._bg.numChildren - 4);
-
+                    let couldPutBomb:boolean = false;
                     if (uid == this._uid){
-                        this._self._blocks[index] = bomb;
+                        if(this._self.incBlock())
+                        {
+                            this._self._blocks[index] = this.putBomb(index);
+                            this._map[index] = Define.BOMB;
+                        } else {
+                            console.log("can not put bomb!")
+                        }
                     } else {
                         for(let p of this._players){
                             if(p && p._uid == uid){
-                                p._blocks[index] = bomb;
+                                if( p.incBlock() ){
+                                    p._blocks[index] = this.putBomb(index);
+                                    this._map[index] = Define.BOMB;
+                                } else {
+                                    console.log("can not put bomb!!")
+                                }
                                 break;
                             }
                         }
@@ -149,11 +173,14 @@ class gameMain{
                 let index = msg.opt[0];
                 if(msg.uid == this._uid){
                     this.destroyBlock(this._self._blocks, index);
+                    this._self.descBlock();
+
                     this.playBombSound();
                     for(let i = 1; i < msg.opt.length; ++i){
                         this.destroyBlock(this._stricks, msg.opt[i]);
                     }
-                    if(msg.score && msg.score > 0){
+                    if(msg.score && msg.score > 0 && msg.score > this._self._score){
+                        this._self._score = msg.score;
                         let pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                         let coin = new Laya.Sprite();
                         coin.loadImage("comp/coin.png");
@@ -173,6 +200,8 @@ class gameMain{
                         if(p && p._uid == msg.uid){
                             this.destroyBlock(p._blocks, index);
                             this.playBombSound();
+                            p.descBlock();
+
                             for(let i = 1; i < msg.opt.length; ++i){
                                 this.destroyBlock(this._stricks, msg.opt[i]);
                             }
@@ -186,23 +215,38 @@ class gameMain{
                 for( let uid of msg.opt){
                     if ( uid == this._uid){
                         this._die = true;
-                        let filter = this.changeToGray(this._self);
-                        this._bg.imge_head_self.filters = [filter];
+                        let filter = this.changeToGray();
+
+                        let head = this._bg.imge_head_self.getChildAt( this._bg.imge_head_self.numChildren - 1) as Laya.Sprite;
+                        
+                        head.filters = [filter];
+                        //this._bg.imge_head_self.filters = [filter];
                         // let node = this._self.getChildAt(this._self.numChildren - 1) as Laya.Text;
                         // if(node){
                         //     node.text = "DIE";
                         //     node.color = "#ff0000";
                         //     this.showGameOver();
                         // }
-
-                        this._bg.imge_head_self.loadImage("comp/die.png");
+                        let sp = new Laya.Sprite();
+                        sp.loadImage("comp/die.png");
+                        this._bg.imge_head_self.addChild(sp);
                     } else {
                         for(let p of this._players){
                             if(p && p._uid == uid){
                                 p._die = true;
-                                let filter = this.changeToGray(p);
-                                this._bg.imge_head_other.filters = [filter];
-                                this._bg.imge_head_other.loadImage("comp/die.png");
+                                let filter = this.changeToGray();
+
+                                let head = this._bg.imge_head_other.getChildAt( this._bg.imge_head_other.numChildren - 1) as Laya.Sprite;
+                                head.filters = [filter];
+                                //this._bg.imge_head_other.filters = [filter];
+
+                                let sp = new Laya.Sprite();
+                                sp.loadImage("comp/die.png");
+
+                                
+                                this._bg.imge_head_other.addChild(sp);
+
+                                
 
                                 // let node = this._self.getChildAt(p.numChildren - 1) as Laya.Text;
                                 // if(node){
@@ -233,6 +277,7 @@ class gameMain{
         other.initPlayer("carton" + image);
         let sp : Laya.Sprite = new Laya.Sprite();
         sp.loadImage("carton" + image + "/head.png");
+        
         this._bg.imge_head_other.addChild(sp);
         other.interval = 50;
         other.scaleY = 0.85;
@@ -331,8 +376,12 @@ class gameMain{
         if( this._die ){
             return;
         }
-        let index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
-        server.sendData("game.OperateReq", {session:this._session, optn:2, opt:[this._uid, index + 1, 1]});
+        if( this._self.tryIncBlock()){
+            let index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
+            server.sendData("game.OperateReq", {session:this._session, optn:2, opt:[this._uid, index + 1, 1]});
+        } else {
+            console.log("can not handleBomb!!");
+        }
     }
 
     private handleKeyDown(e: Laya.Event){
@@ -377,7 +426,7 @@ class gameMain{
         if(msg.uid == this._uid){
             console.log("error handleEnterTable")
         } else {
-            this._bg.imge_head_other.destroyChildren();
+            this._bg.imge_head_other.removeChildren(0, this._bg.imge_head_other.numChildren);
             this.createOtherPlayer(msg.uid, msg.index, msg.nickname, msg.image);
         }
     }
@@ -386,7 +435,6 @@ class gameMain{
         this._map = msg.wall;
         this._bg = new gameBg();
         
-
         this._rank = msg.rank;
         this._row = msg.row;
 
@@ -476,7 +524,9 @@ class gameMain{
             if(uid == this._uid){
 
                 self.initPlayer("carton" + image);
-                this._bg.imge_head_self.loadImage("carton" + image + "/head.png");
+                let head = new Laya.Sprite();
+                head.loadImage("carton" + image + "/head.png");
+                this._bg.imge_head_self.addChild(head);
                 self.interval = 50;
                 self.scaleY = 0.85;
 
@@ -492,13 +542,15 @@ class gameMain{
             }
         }
         if( ! createOtherSuccess){
-            if(this._bg.imge_head_other.numChildren > 0){
-                this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
-            }
+            
+            this._bg.imge_head_other.removeChildren(0, this._bg.imge_head_other.numChildren);
+            
             
             let sp:Laya.Sprite = new Laya.Sprite();
             sp.loadImage("comp/waitting.png");
             this._bg.imge_head_other.addChild(sp);
+
+            
         }
     }
     

@@ -29,10 +29,16 @@ var gameMain = /** @class */ (function () {
             for (var i = 0; i < this._players.length; ++i) {
                 var p = this._players[i];
                 if (p && p._uid == msg.uid) {
+                    for (var bomb in p._blocks) {
+                        if (bomb) {
+                            p._blocks[bomb].removeSelf();
+                            p._blocks[bomb].destroy();
+                        }
+                    }
                     p.removeSelf();
                     p.destroy();
                     this._players[i] = undefined;
-                    this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
+                    this._bg.imge_head_other.removeChildren(0, this._bg.imge_head_other.numChildren); //removeChildAt(this._bg.imge_head_other.numChildren - 1);
                     var sp = new Laya.Sprite();
                     sp.loadImage("comp/waitting.png");
                     this._bg.imge_head_other.addChild(sp);
@@ -50,7 +56,7 @@ var gameMain = /** @class */ (function () {
             blocks[index].removeSelf();
             blocks[index].destroy();
             blocks[index] = undefined;
-            this._map[index] = 3;
+            this._map[index] = Define.EMPTYPLACE;
             var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
             var bombing = new ui.bombingUI();
             bombing.pos(pos[0], pos[1]);
@@ -59,7 +65,7 @@ var gameMain = /** @class */ (function () {
             Laya.timer.once(1500, this, function () { Laya.stage.removeChild(node_1); });
         }
     };
-    gameMain.prototype.changeToGray = function (p) {
+    gameMain.prototype.changeToGray = function () {
         var colorMatrix = [
             0.3086, 0.6094, 0.0820, 0, 0,
             0.3086, 0.6094, 0.0820, 0, 0,
@@ -69,7 +75,7 @@ var gameMain = /** @class */ (function () {
         //创建灰色颜色滤镜
         var GrayFilter = new Laya.ColorFilter(colorMatrix);
         //添加灰色颜色滤镜效果
-        p.filters = [GrayFilter];
+        //p.filters = [GrayFilter];
         return GrayFilter;
     };
     gameMain.prototype.playBombSound = function () {
@@ -80,6 +86,16 @@ var gameMain = /** @class */ (function () {
         gameOver.loadImage("comp/game_over.png");
         Laya.stage.addChild(gameOver);
     };
+    gameMain.prototype.putBomb = function (index) {
+        var bomb = new Laya.Animation();
+        bomb.loadAnimation("scale_bomb.ani");
+        this._bg.addChild(bomb);
+        var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
+        bomb.pos(pos[0], pos[1] - this._val);
+        bomb.play();
+        this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 4);
+        return bomb;
+    };
     gameMain.prototype.handleOperateNtf = function (msg) {
         var _this = this;
         if (msg) {
@@ -87,21 +103,27 @@ var gameMain = /** @class */ (function () {
                 for (var i = 0; i < msg.opt.length; i = i + 3) {
                     var uid = msg.opt[i];
                     var index = msg.opt[i + 1];
-                    var bomb = new Laya.Animation();
-                    bomb.loadAnimation("scale_bomb.ani");
-                    this._bg.addChild(bomb);
-                    var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
-                    bomb.pos(pos[0], pos[1] - this._val);
-                    bomb.play();
-                    this._bg.setChildIndex(this._bg.getChildAt(this._bg.numChildren - 1), this._bg.numChildren - 4);
+                    var couldPutBomb = false;
                     if (uid == this._uid) {
-                        this._self._blocks[index] = bomb;
+                        if (this._self.incBlock()) {
+                            this._self._blocks[index] = this.putBomb(index);
+                            this._map[index] = Define.BOMB;
+                        }
+                        else {
+                            console.log("can not put bomb!");
+                        }
                     }
                     else {
                         for (var _i = 0, _a = this._players; _i < _a.length; _i++) {
                             var p = _a[_i];
                             if (p && p._uid == uid) {
-                                p._blocks[index] = bomb;
+                                if (p.incBlock()) {
+                                    p._blocks[index] = this.putBomb(index);
+                                    this._map[index] = Define.BOMB;
+                                }
+                                else {
+                                    console.log("can not put bomb!!");
+                                }
                                 break;
                             }
                         }
@@ -112,11 +134,13 @@ var gameMain = /** @class */ (function () {
                 var index = msg.opt[0];
                 if (msg.uid == this._uid) {
                     this.destroyBlock(this._self._blocks, index);
+                    this._self.descBlock();
                     this.playBombSound();
                     for (var i = 1; i < msg.opt.length; ++i) {
                         this.destroyBlock(this._stricks, msg.opt[i]);
                     }
-                    if (msg.score && msg.score > 0) {
+                    if (msg.score && msg.score > 0 && msg.score > this._self._score) {
+                        this._self._score = msg.score;
                         var pos = this.calc_pos_xy(index, this._width, this._height - this._val);
                         var coin = new Laya.Sprite();
                         coin.loadImage("comp/coin.png");
@@ -138,6 +162,7 @@ var gameMain = /** @class */ (function () {
                         if (p && p._uid == msg.uid) {
                             this.destroyBlock(p._blocks, index);
                             this.playBombSound();
+                            p.descBlock();
                             for (var i = 1; i < msg.opt.length; ++i) {
                                 this.destroyBlock(this._stricks, msg.opt[i]);
                             }
@@ -153,24 +178,32 @@ var gameMain = /** @class */ (function () {
                     var uid = _e[_d];
                     if (uid == this._uid) {
                         this._die = true;
-                        var filter = this.changeToGray(this._self);
-                        this._bg.imge_head_self.filters = [filter];
+                        var filter = this.changeToGray();
+                        var head = this._bg.imge_head_self.getChildAt(this._bg.imge_head_self.numChildren - 1);
+                        head.filters = [filter];
+                        //this._bg.imge_head_self.filters = [filter];
                         // let node = this._self.getChildAt(this._self.numChildren - 1) as Laya.Text;
                         // if(node){
                         //     node.text = "DIE";
                         //     node.color = "#ff0000";
                         //     this.showGameOver();
                         // }
-                        this._bg.imge_head_self.loadImage("comp/die.png");
+                        var sp = new Laya.Sprite();
+                        sp.loadImage("comp/die.png");
+                        this._bg.imge_head_self.addChild(sp);
                     }
                     else {
                         for (var _f = 0, _g = this._players; _f < _g.length; _f++) {
                             var p = _g[_f];
                             if (p && p._uid == uid) {
                                 p._die = true;
-                                var filter = this.changeToGray(p);
-                                this._bg.imge_head_other.filters = [filter];
-                                this._bg.imge_head_other.loadImage("comp/die.png");
+                                var filter = this.changeToGray();
+                                var head = this._bg.imge_head_other.getChildAt(this._bg.imge_head_other.numChildren - 1);
+                                head.filters = [filter];
+                                //this._bg.imge_head_other.filters = [filter];
+                                var sp = new Laya.Sprite();
+                                sp.loadImage("comp/die.png");
+                                this._bg.imge_head_other.addChild(sp);
                                 // let node = this._self.getChildAt(p.numChildren - 1) as Laya.Text;
                                 // if(node){
                                 //     node.text = "DIE";
@@ -283,8 +316,13 @@ var gameMain = /** @class */ (function () {
         if (this._die) {
             return;
         }
-        var index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
-        server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
+        if (this._self.tryIncBlock()) {
+            var index = this.calc_pos_index(this._self.x, this._self.y + this._val2);
+            server.sendData("game.OperateReq", { session: this._session, optn: 2, opt: [this._uid, index + 1, 1] });
+        }
+        else {
+            console.log("can not handleBomb!!");
+        }
     };
     gameMain.prototype.handleKeyDown = function (e) {
         if (e.keyCode == 37) {
@@ -328,7 +366,7 @@ var gameMain = /** @class */ (function () {
             console.log("error handleEnterTable");
         }
         else {
-            this._bg.imge_head_other.destroyChildren();
+            this._bg.imge_head_other.removeChildren(0, this._bg.imge_head_other.numChildren);
             this.createOtherPlayer(msg.uid, msg.index, msg.nickname, msg.image);
         }
     };
@@ -405,7 +443,9 @@ var gameMain = /** @class */ (function () {
             var image = p.image;
             if (uid == this._uid) {
                 self.initPlayer("carton" + image);
-                this._bg.imge_head_self.loadImage("carton" + image + "/head.png");
+                var head = new Laya.Sprite();
+                head.loadImage("carton" + image + "/head.png");
+                this._bg.imge_head_self.addChild(head);
                 self.interval = 50;
                 self.scaleY = 0.85;
                 bg.addChild(self);
@@ -419,9 +459,7 @@ var gameMain = /** @class */ (function () {
             }
         }
         if (!createOtherSuccess) {
-            if (this._bg.imge_head_other.numChildren > 0) {
-                this._bg.imge_head_other.removeChildAt(this._bg.imge_head_other.numChildren - 1);
-            }
+            this._bg.imge_head_other.removeChildren(0, this._bg.imge_head_other.numChildren);
             var sp = new Laya.Sprite();
             sp.loadImage("comp/waitting.png");
             this._bg.imge_head_other.addChild(sp);
